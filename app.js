@@ -11,7 +11,9 @@ async function loadUnits(){
  units=(data||[]).map(u=>({...u,photos:(u.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))}));
  el.innerHTML=units.map((u,i)=>{const p=u.photos[0];const pic=p?'<img class="unit-photo" src="'+photoUrl(p.storage_path)+'" alt="'+esc(p.alt_text||u.name)+'" loading="lazy">':'Fotografija';return '<article class="card"><button class="photo-open" data-gallery="'+i+'" type="button"><div class="card-image">'+pic+'<span class="photo-count">'+u.photos.length+' fotografija</span></div></button><div class="card-body"><h3>'+esc(u.name)+'</h3><p>'+esc(u.description)+'</p><small>Do '+u.max_guests+' gostiju</small><button class="gallery-link" data-gallery="'+i+'" type="button">Pogledajte galeriju</button></div></article>'}).join('');
  document.querySelectorAll('[data-gallery]').forEach(b=>b.onclick=()=>openGallery(Number(b.dataset.gallery)));
+ renderMainGallery();
 }
+function renderMainGallery(){const g=document.getElementById('main-gallery');if(!g)return;g.innerHTML=units.map((u,i)=>{const p=u.photos[0];if(!p)return '';return '<button type="button" class="main-gallery-item" data-main-gallery="'+i+'"><img src="'+photoUrl(p.storage_path)+'" alt="'+esc(u.name)+'" loading="lazy"><span>'+esc(u.name)+'</span></button>'}).join('');g.querySelectorAll('[data-main-gallery]').forEach(b=>b.onclick=()=>openGallery(Number(b.dataset.mainGallery)));}
 function openGallery(i){
  const u=units[i];if(!u||!u.photos.length)return;let n=0;
  const box=document.createElement('div');box.className='lightbox';
