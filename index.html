@@ -1,67 +1,26 @@
 <!doctype html>
 <html lang="sr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Apartments Via Mare — Buljarica, Montenegro. Apartments near the Adriatic coast." />
-  <title>Apartments Via Mare | Buljarica, Montenegro</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Apartments Via Mare — Buljarica, Montenegro.">
+<title>Apartments Via Mare | Buljarica</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <header class="hero">
-    <nav class="nav wrap">
-      <a class="brand" href="#top">VIA MARE</a>
-      <div class="links">
-        <a href="#apartmani">Apartmani</a>
-        <a href="#galerija">Galerija</a>
-        <a href="#lokacija">Lokacija</a>
-        <a href="#kontakt">Kontakt</a>
-      </div>
-    </nav>
-    <div class="hero-content wrap" id="top">
-      <p class="eyebrow">BULJARICA · MONTENEGRO</p>
-      <h1>Apartments Via Mare</h1>
-      <p class="lead">Mir, more i odmor na crnogorskom primorju.</p>
-      <a class="button" href="#apartmani">Pogledajte apartmane</a>
-    </div>
-  </header>
-
-  <main>
-    <section class="section wrap intro">
-      <p class="eyebrow">DOBRO DOŠLI</p>
-      <h2>Vaš boravak u Buljarici</h2>
-      <p>Ovo je početna verzija zvaničnog sajta Apartments Via Mare. Fotografije, tipovi smeštaja, sadržaji, cene i sistem upita biće povezani sa zasebnom Via Mare bazom.</p>
-    </section>
-
-    <section class="section alt" id="apartmani">
-      <div class="wrap">
-        <p class="eyebrow">SMEŠTAJ</p>
-        <h2>Apartmani i studiji</h2>
-        <div class="grid">
-          <article class="card"><div class="placeholder">Fotografija</div><h3>Tip smeštaja</h3><p>Detalji i fotografije biće učitani iz baze.</p></article>
-          <article class="card"><div class="placeholder">Fotografija</div><h3>Tip smeštaja</h3><p>Detalji i fotografije biće učitani iz baze.</p></article>
-          <article class="card"><div class="placeholder">Fotografija</div><h3>Tip smeštaja</h3><p>Detalji i fotografije biće učitani iz baze.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section wrap" id="galerija">
-      <p class="eyebrow">GALERIJA</p>
-      <h2>Via Mare</h2>
-      <p>Ovde ćemo postaviti fotografije koje smo već izdvojili i razvrstali po kategorijama smeštaja.</p>
-    </section>
-
-    <section class="section alt" id="lokacija">
-      <div class="wrap"><p class="eyebrow">LOKACIJA</p><h2>Buljarica, Crna Gora</h2><p>Mapa i precizni podaci o lokaciji biće dodati u sledećoj fazi.</p></div>
-    </section>
-
-    <section class="section wrap" id="kontakt">
-      <p class="eyebrow">KONTAKT I REZERVACIJE</p>
-      <h2>Pošaljite upit</h2>
-      <p>Kontakt forma i direktan sistem upita biće povezani nakon postavljanja baze.</p>
-    </section>
-  </main>
-
-  <footer><div class="wrap">© Apartments Via Mare · Buljarica, Montenegro</div></footer>
-</body>
-</html>
+<header class="hero" id="top">
+<nav class="nav wrap"><a class="brand" href="#top">VIA MARE<span>APARTMENTS</span></a><div class="links"><a href="#smestaj">Smeštaj</a><a href="#galerija">Galerija</a><a href="#lokacija">Lokacija</a><a href="#kontakt">Kontakt</a></div><a class="nav-cta" href="#kontakt">Rezervišite</a></nav>
+<div class="hero-content wrap"><p class="eyebrow">BULJARICA · MONTENEGRO</p><h1>More počinje<br>ovde.</h1><p class="lead">Apartments Via Mare — miran boravak na crnogorskom primorju.</p><a class="button" href="#smestaj">Istražite smeštaj</a></div>
+</header>
+<main>
+<section class="section intro wrap"><p class="eyebrow">VIA MARE</p><h2>Odmor u Buljarici</h2><p class="intro-copy">Zvanični sajt Apartments Via Mare. Ponuda smeštaja, fotografije, raspoloživost i cene biće objedinjeni na jednom mestu.</p></section>
+<section class="section accommodation" id="smestaj"><div class="wrap"><div class="section-head"><div><p class="eyebrow">SMEŠTAJ</p><h2>Izaberite svoj apartman</h2></div><p>Jedinice se učitavaju direktno iz Via Mare baze.</p></div><div class="grid" id="unit-grid"><div class="loading">Učitavanje smeštaja…</div></div></div></section>
+<section class="gallery-band" id="galerija"><div class="wrap"><p class="eyebrow light">GALERIJA</p><h2>Via Mare u slikama</h2><p>Fotografije objekta i apartmana biće ovde raspoređene po kategorijama.</p></div></section>
+<section class="section wrap split" id="lokacija"><div><p class="eyebrow">LOKACIJA</p><h2>Buljarica<br>Crna Gora</h2></div><div class="text-block"><p>Lokaciju, udaljenosti i mapu dodaćemo iz proverenih podataka objekta.</p><a href="#kontakt" class="text-link">Kontaktirajte nas →</a></div></section>
+<section class="section contact" id="kontakt"><div class="wrap contact-grid"><div><p class="eyebrow light">KONTAKT</p><h2>Pošaljite upit</h2><p>Pošaljite željene datume i broj gostiju. Upit se čuva direktno u Via Mare sistemu.</p></div>
+<form id="inquiry-form"><div class="form-row"><input name="name" placeholder="Ime i prezime" required><input name="email" type="email" placeholder="E-mail"></div><div class="form-row"><label>Dolazak<input name="checkin" type="date"></label><label>Odlazak<input name="checkout" type="date"></label></div><input name="guests" type="number" min="1" placeholder="Broj gostiju"><textarea name="message" placeholder="Poruka" required></textarea><button class="button dark" type="submit">Pošaljite upit</button><p id="form-status"></p></form>
+</div></section>
+</main>
+<footer><div class="wrap footer-row"><div class="brand">VIA MARE<span>APARTMENTS</span></div><div>Buljarica · Montenegro</div><div>© 2026 Via Mare</div></div></footer>
+<script src="app.js"></script>
+</body></html>
