@@ -14,12 +14,13 @@ async function loadDashboard(){
   db.from('units').select('id,name,internal_code,active,external_ids').order('internal_code'),
   db.from('reservations').select('id',{count:'exact',head:true}),
   db.from('channel_connections').select('id,provider,status'),
-  db.from('contact_inquiries').select('id',{count:'exact',head:true})
+  db.from('contact_inquiries').select('id,name,email,desired_check_in,desired_check_out,guests,status,created_at').order('created_at',{ascending:false}).limit(50)
  ]);
  document.getElementById('s-units').textContent=u.data?.length??'—';
  document.getElementById('s-res').textContent=r.count??'—';
  document.getElementById('s-channel').textContent=c.data?.length?c.data.length:'0';
- document.getElementById('s-inq').textContent=q.count??'—';
+ document.getElementById('s-inq').textContent=q.data?.length??'—';
+ document.getElementById('inquiries-body').innerHTML=(q.data||[]).map(x=>'<tr><td>'+esc(x.created_at?new Date(x.created_at).toLocaleDateString('sr-RS'):'')+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.email)+'</td><td>'+esc(x.desired_check_in||'')+' – '+esc(x.desired_check_out||'')+'</td><td>'+esc(x.guests||'')+'</td><td>'+esc(x.status||'novo')+'</td></tr>').join('')||'<tr><td colspan="6">Još nema upita.</td></tr>';
  document.getElementById('units-body').innerHTML=(u.data||[]).map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+esc(x.internal_code)+'</td><td>'+esc(x.external_ids?.floor||'')+'</td><td>'+(x.active?'Aktivan':'Neaktivan')+'</td></tr>').join('');
  document.getElementById('reservations-note').textContent=(r.count||0)?'U bazi postoji '+r.count+' rezervacija.':'Još nema rezervacija u bazi.';
  document.getElementById('channel-note').textContent=c.data?.length?c.data.map(x=>x.provider+' — '+x.status).join(', '):'Channel manager još nije povezan.';
