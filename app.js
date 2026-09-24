@@ -12,8 +12,14 @@ const SB="https://arcjsoupsfdoosspfgvb.supabase.co",KEY="sb_publishable_EfnLnRBd
 function renderFullGallery(){
   const g=document.getElementById("full-gallery");
   if(!g)return;
-  const arr=[];
-  units.forEach(u=>u.photos.forEach(p=>arr.push({u,p})));
+  const seen=new Set(),arr=[];
+  units.forEach(u=>u.photos.forEach(p=>{
+    const file=p.storage_path.split("/").pop().toLowerCase();
+    const fingerprint=(file.match(/_([0-9a-f]+)\.[^.]+$/)||[])[1]||file;
+    if(seen.has(fingerprint))return;
+    seen.add(fingerprint);
+    arr.push({u,p});
+  }));
   g.innerHTML=arr.map((x,i)=>`<button class="gallery-thumb" data-i="${i}" aria-label="Otvori fotografiju"><img src="${purl(x.p.storage_path)}" alt="${srName[x.u.name]||x.u.name}"></button>`).join("");
   g.querySelectorAll("button").forEach(b=>b.onclick=()=>openLight(arr,+b.dataset.i));
 }
