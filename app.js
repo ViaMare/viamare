@@ -21,16 +21,13 @@ function renderFullGallery(){
     "One-Bedroom Apartment with Sea View":"Classic Apartment, 1 Bedroom, Sea View/",
     "Apartment with Sea View - (Attic)":"Basic Apartment, 1 Bedroom, Balcony, Sea View/"
   };
-  const seen=new Set(),arr=[];
+  const arr=[];
   units.forEach(u=>{
-    const preferred=(u.photos||[]).filter(p=>p.storage_path.includes("/"+canonical[u.name]));
-    const source=preferred.length?preferred:u.photos||[];
-    source.forEach(p=>{
-      const file=p.storage_path.split("/").pop().toLowerCase();
-      const fingerprint=(file.match(/_([0-9a-f]+)\.[^.]+$/)||[])[1]||file;
-      if(seen.has(fingerprint))return;
-      seen.add(fingerprint);arr.push({u,p});
-    });
+    const prefix=canonical[u.name];
+    let source=(u.photos||[]).filter(p=>prefix&&p.storage_path.includes("/"+prefix));
+    if(!source.length)source=u.photos||[];
+    /* Public gallery uses only the curated/canonical set already capped by clean(). */
+    source.slice(0,expected[u.name]||source.length).forEach(p=>arr.push({u,p}));
   });
   const total=arr.length;
   const labels={"Standard Triple Studio":"Studio","Triple Studio with Balcony":"Studio balkon","Triple Studio with Sea View":"Studio more","Standard One Bedroom Apartment":"Apartman standard","One-Bedroom Apartment with Balcony":"Apartman balkon","One-Bedroom Apartment with Sea View":"Apartman more","Apartment with Sea View - (Attic)":"Potkrovlje"};
