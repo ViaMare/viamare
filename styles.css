@@ -136,3 +136,15 @@
 
 /* Slightly larger desktop gallery filter labels */
 @media(min-width:901px){#gallery-filters button{font-size:12px!important;line-height:1.15!important;padding:7px 3px!important}}
+
+/* Compact one-screen booking checkout */
+.payment-unit-preview{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.18)}
+.payment-unit-photo{height:105px;background:rgba(255,255,255,.08);overflow:hidden;border-radius:3px}
+.payment-unit-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.payment-unit-preview h2{margin:5px 0 0;font-size:22px;line-height:1.15}
+.booking-summary{padding-top:15px}.booking-summary h3{margin:0 0 10px}
+.summary-row{display:flex;justify-content:space-between;gap:18px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:13px}
+.summary-row strong{text-align:right}.summary-total{font-size:15px;padding-top:10px}.summary-note{font-size:11px;opacity:.72;margin:12px 0 0}
+.checkout-grid{align-items:start}.checkout-card{padding-top:28px;padding-bottom:28px}.checkout-card h2{margin-top:0;margin-bottom:14px}.checkout-card input,.checkout-card select{margin-bottom:10px}
+@media(min-width:901px){.page-hero{padding:55px 0!important}.page-hero h1{margin:5px 0 8px}.section:has(.checkout-grid){padding:35px 0!important}.checkout-grid{grid-template-columns:1.15fr .85fr!important;gap:30px!important}}
+@media(max-width:700px){.payment-unit-preview{grid-template-columns:110px 1fr}.payment-unit-photo{height:85px}}
