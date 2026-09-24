@@ -22,3 +22,9 @@
 
 /* Official accommodation category stars */
 .category-stars{color:#f2b705;font-family:Arial,sans-serif;font-weight:700;letter-spacing:2px;text-shadow:none;white-space:nowrap}
+
+/* Prominent official Via Mare logo */
+.header-inner{height:116px}
+.logo{display:flex;align-items:center;flex:0 0 auto;margin-right:28px}
+.logo img{width:200px;height:104px;object-fit:contain;display:block}
+@media(max-width:850px){.header-inner{height:94px}.logo img{width:158px;height:82px}.logo{margin-right:12px}}
