@@ -12,14 +12,31 @@ const SB="https://arcjsoupsfdoosspfgvb.supabase.co",KEY="sb_publishable_EfnLnRBd
 function renderFullGallery(){
   const g=document.getElementById("full-gallery");
   if(!g)return;
+  /* Some Booking/Expedia source folders contain the same physical photo
+     under different filenames. For the public gallery use only the canonical
+     source set for each accommodation type, instead of merging overlapping
+     legacy/source folders. */
+  const canonical={
+    "Standard Triple Studio":"Standard triple studio/",
+    "Triple Studio with Balcony":"Classic Studio, Balcony/",
+    "Triple Studio with Sea View":"Classic Studio, Balcony, Sea View/",
+    "Standard One Bedroom Apartment":"Standard One bedroom apartment/",
+    "One-Bedroom Apartment with Balcony":"Classic Apartment, 1 Bedroom, Balcony/",
+    "One-Bedroom Apartment with Sea View":"Classic Apartment, 1 Bedroom, Sea View/",
+    "Apartment with Sea View - (Attic)":"Basic Apartment, 1 Bedroom, Balcony, Sea View/"
+  };
   const seen=new Set(),arr=[];
-  units.forEach(u=>u.photos.forEach(p=>{
-    const file=p.storage_path.split("/").pop().toLowerCase();
-    const fingerprint=(file.match(/_([0-9a-f]+)\.[^.]+$/)||[])[1]||file;
-    if(seen.has(fingerprint))return;
-    seen.add(fingerprint);
-    arr.push({u,p});
-  }));
+  units.forEach(u=>{
+    const preferred=(u.photos||[]).filter(p=>p.storage_path.includes("/"+canonical[u.name]));
+    const source=preferred.length?preferred:u.photos||[];
+    source.forEach(p=>{
+      const file=p.storage_path.split("/").pop().toLowerCase();
+      const fingerprint=(file.match(/_([0-9a-f]+)\.[^.]+$/)||[])[1]||file;
+      if(seen.has(fingerprint))return;
+      seen.add(fingerprint);
+      arr.push({u,p});
+    });
+  });
   g.innerHTML=arr.map((x,i)=>`<button class="gallery-thumb" data-i="${i}" aria-label="Otvori fotografiju"><img src="${purl(x.p.storage_path)}" alt="${srName[x.u.name]||x.u.name}"></button>`).join("");
   g.querySelectorAll("button").forEach(b=>b.onclick=()=>openLight(arr,+b.dataset.i));
 }
