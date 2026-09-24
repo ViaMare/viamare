@@ -21,7 +21,9 @@ const propertyPhotos=[
 function renderFullGallery(){
  const g=document.getElementById("full-gallery"),f=document.getElementById("gallery-featured"),filters=document.getElementById("gallery-filters"),toggle=document.getElementById("gallery-show-all");
  if(!g)return;
- const seen=new Set(),all=[];\n const propertyUnit={name:"Objekat i dvorište"};\n propertyPhotos.forEach(p=>{all.push({u:propertyUnit,p})});
+ const seen=new Set(),all=[];
+ const propertyUnit={name:"Objekat i dvorište"};
+ propertyPhotos.forEach(p=>{all.push({u:propertyUnit,p})});
  units.forEach(u=>(u.photos||[]).forEach(p=>{
    const file=(p.storage_path.split("/").pop()||p.storage_path).toLowerCase();
    const base=file.replace(/\.[^.]+$/,"").replace(/[-_ ]?(copy|duplicate|dup)[-_ ]?\d*$/,"");
