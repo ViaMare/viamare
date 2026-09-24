@@ -9,7 +9,7 @@ const SB="https://arcjsoupsfdoosspfgvb.supabase.co",KEY="sb_publishable_EfnLnRBd
   });
   select.innerHTML=ordered.map(u=>`<option value="${u.name}"${u.name===requested?" selected":""}>${srName[u.name]||u.name}</option>`).join("");
 }
-const propertyPhotos=[
+const propertyPhotos=[{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/0fa8bb52.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:0,alt_text:"Apartments Via Mare"}]; /* fallback */ const legacyPropertyPhotos=[
  {storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/0fa8bb52.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:1,alt_text:"Apartments Via Mare — objekat"},
  {storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/560a0bab.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:2,alt_text:"Apartments Via Mare — objekat i okolina"},
  {storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/8fed9af4.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:3,alt_text:"Apartments Via Mare — objekat iz vazduha"},
@@ -18,6 +18,7 @@ const propertyPhotos=[
  {storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/fdd52139.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:6,alt_text:"Apartments Via Mare — roštilj i dvorište"},
  {storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/d1a3c180.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:7,alt_text:"Apartments Via Mare — prilaz objektu"}
 ];
+propertyPhotos.push(...legacyPropertyPhotos);
 function renderFullGallery(){
  const g=document.getElementById("full-gallery"),f=document.getElementById("gallery-featured"),filters=document.getElementById("gallery-filters"),toggle=document.getElementById("gallery-show-all");
  if(!g)return;
@@ -44,5 +45,5 @@ function renderFullGallery(){
  if(toggle){toggle.textContent='Prikaži sve fotografije ('+all.length+')';toggle.onclick=()=>{g.hidden=!g.hidden;f.hidden=!g.hidden;toggle.textContent=g.hidden?'Prikaži sve fotografije ('+all.length+')':'Vrati pregled galerije'}}
 }
 function setupInquiryForm(){const f=document.getElementById("inquiry-form");if(!f)return;f.addEventListener("submit",async e=>{e.preventDefault();const d=new FormData(f),s=document.getElementById("form-status"),b=f.querySelector('button[type="submit"]'),ci=d.get("checkin"),co=d.get("checkout");if(ci&&co&&co<=ci){s.textContent="Datum odlaska mora biti posle datuma dolaska.";return}b.disabled=true;s.textContent="Šaljemo upit…";const{error}=await db.from("contact_inquiries").insert({name:(d.get("name")||"").trim(),email:(d.get("email")||"").trim()||null,phone:(d.get("phone")||"").trim()||null,message:(d.get("message")||"").trim(),desired_check_in:ci||null,desired_check_out:co||null,guests:d.get("guests")?Number(d.get("guests")):null});if(error){s.textContent="Upit trenutno nije poslat. Pokušajte ponovo.";b.disabled=false;return}f.reset();s.textContent="Hvala. Vaš upit je uspješno poslat.";b.disabled=false})}setupInquiryForm();
-document.querySelector(".menu-toggle")?.addEventListener("click",()=>document.body.classList.toggle("mobile-open"));document.querySelectorAll("#booking-form").forEach(f=>f.onsubmit=e=>{e.preventDefault();let d=new FormData(f),a=d.get("arrival"),o=d.get("departure"),r=document.getElementById("booking-result");if(r)r.innerHTML=o<=a?"Datum odlaska mora biti posle datuma dolaska.":`<p><b>${a} — ${o}</b><br>Raspoloživost i cijena biće prikazane nakon povezivanja channel managera.</p>`});load();
+document.querySelector(".menu-toggle")?.addEventListener("click",()=>document.body.classList.toggle("mobile-open"));document.querySelectorAll("#booking-form").forEach(f=>f.onsubmit=e=>{e.preventDefault();let d=new FormData(f),a=d.get("arrival"),o=d.get("departure"),r=document.getElementById("booking-result");if(r)r.innerHTML=o<=a?"Datum odlaska mora biti posle datuma dolaska.":`<p><b>${a} — ${o}</b><br>Raspoloživost i cijena biće prikazane nakon povezivanja channel managera.</p>`});if(document.getElementById("full-gallery"))renderFullGallery();load();
 document.addEventListener("click",e=>{let l=document.getElementById("lightbox");if(e.target.closest(".lb-close")){if(l){l.hidden=true;document.body.style.overflow=""};return}if(e.target.closest(".lb-prev")){stepLight(-1);return}if(e.target.closest(".lb-next")){stepLight(1);return}if(e.target.id==="lightbox"){e.target.hidden=true;document.body.style.overflow=""}});document.addEventListener("keydown",e=>{let l=document.getElementById("lightbox");if(!l||l.hidden)return;if(e.key==="Escape"){l.hidden=true;document.body.style.overflow=""}if(e.key==="ArrowLeft")stepLight(-1);if(e.key==="ArrowRight")stepLight(1)});
