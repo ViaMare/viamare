@@ -32,7 +32,7 @@ function renderFullGallery(){
       seen.add(fingerprint);arr.push({u,p});
     });
   });
-  const total=118;
+  const total=arr.length;
   const labels={"Standard Triple Studio":"Studio","Triple Studio with Balcony":"Studio balkon","Triple Studio with Sea View":"Studio more","Standard One Bedroom Apartment":"Apartman standard","One-Bedroom Apartment with Balcony":"Apartman balkon","One-Bedroom Apartment with Sea View":"Apartman more","Apartment with Sea View - (Attic)":"Potkrovlje"};
   let current=null;
   function subset(){return current?arr.filter(x=>x.u.name===current):arr}
@@ -53,7 +53,7 @@ function renderFullGallery(){
     filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{current=b.dataset.unit||null;filters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));drawFeatured();drawGrid();if(!g.hidden)g.scrollIntoView({behavior:"smooth",block:"start"})});
   }
   drawFeatured();drawGrid();
-  if(showAll){showAll.textContent=`Prikaži svih ${total} fotografija`;showAll.onclick=()=>{g.hidden=!g.hidden;featured.hidden=!g.hidden;showAll.textContent=g.hidden?`Prikaži svih ${total} fotografija`:"Vrati pregled galerije";if(!g.hidden)g.scrollIntoView({behavior:"smooth",block:"start"})}}
+  if(showAll){showAll.textContent=`Prikaži sve fotografije (${total})`;showAll.onclick=()=>{g.hidden=!g.hidden;featured.hidden=!g.hidden;showAll.textContent=g.hidden?`Prikaži sve fotografije (${total})`:"Vrati pregled galerije";if(!g.hidden)g.scrollIntoView({behavior:"smooth",block:"start"})}}
 }
 function setupInquiryForm(){const f=document.getElementById("inquiry-form");if(!f)return;f.addEventListener("submit",async e=>{e.preventDefault();const d=new FormData(f),s=document.getElementById("form-status"),b=f.querySelector('button[type="submit"]'),ci=d.get("checkin"),co=d.get("checkout");if(ci&&co&&co<=ci){s.textContent="Datum odlaska mora biti posle datuma dolaska.";return}b.disabled=true;s.textContent="Šaljemo upit…";const{error}=await db.from("contact_inquiries").insert({name:(d.get("name")||"").trim(),email:(d.get("email")||"").trim()||null,phone:(d.get("phone")||"").trim()||null,message:(d.get("message")||"").trim(),desired_check_in:ci||null,desired_check_out:co||null,guests:d.get("guests")?Number(d.get("guests")):null});if(error){s.textContent="Upit trenutno nije poslat. Pokušajte ponovo.";b.disabled=false;return}f.reset();s.textContent="Hvala. Vaš upit je uspješno poslat.";b.disabled=false})}setupInquiryForm();
 document.querySelector(".menu-toggle")?.addEventListener("click",()=>document.body.classList.toggle("mobile-open"));document.querySelectorAll("#booking-form").forEach(f=>f.onsubmit=e=>{e.preventDefault();let d=new FormData(f),a=d.get("arrival"),o=d.get("departure"),r=document.getElementById("booking-result");if(r)r.innerHTML=o<=a?"Datum odlaska mora biti posle datuma dolaska.":`<p><b>${a} — ${o}</b><br>Raspoloživost i cijena biće prikazane nakon povezivanja channel managera.</p>`});load();
