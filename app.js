@@ -10,12 +10,8 @@ const SB="https://arcjsoupsfdoosspfgvb.supabase.co",KEY="sb_publishable_EfnLnRBd
   select.innerHTML=ordered.map(u=>`<option value="${u.name}"${u.name===requested?" selected":""}>${srName[u.name]||u.name}</option>`).join("");
 }
 function renderFullGallery(){
-  const g=document.getElementById("full-gallery");
+  const g=document.getElementById("full-gallery"),featured=document.getElementById("gallery-featured"),filters=document.getElementById("gallery-filters"),showAll=document.getElementById("gallery-show-all");
   if(!g)return;
-  /* Some Booking/Expedia source folders contain the same physical photo
-     under different filenames. For the public gallery use only the canonical
-     source set for each accommodation type, instead of merging overlapping
-     legacy/source folders. */
   const canonical={
     "Standard Triple Studio":"Standard triple studio/",
     "Triple Studio with Balcony":"Classic Studio, Balcony/",
@@ -33,12 +29,31 @@ function renderFullGallery(){
       const file=p.storage_path.split("/").pop().toLowerCase();
       const fingerprint=(file.match(/_([0-9a-f]+)\.[^.]+$/)||[])[1]||file;
       if(seen.has(fingerprint))return;
-      seen.add(fingerprint);
-      arr.push({u,p});
+      seen.add(fingerprint);arr.push({u,p});
     });
   });
-  g.innerHTML=arr.map((x,i)=>`<button class="gallery-thumb" data-i="${i}" aria-label="Otvori fotografiju"><img src="${purl(x.p.storage_path)}" alt="${srName[x.u.name]||x.u.name}"></button>`).join("");
-  g.querySelectorAll("button").forEach(b=>b.onclick=()=>openLight(arr,+b.dataset.i));
+  const total=118;
+  const labels={"Standard Triple Studio":"Studio","Triple Studio with Balcony":"Studio balkon","Triple Studio with Sea View":"Studio more","Standard One Bedroom Apartment":"Apartman standard","One-Bedroom Apartment with Balcony":"Apartman balkon","One-Bedroom Apartment with Sea View":"Apartman more","Apartment with Sea View - (Attic)":"Potkrovlje"};
+  let current=null;
+  function subset(){return current?arr.filter(x=>x.u.name===current):arr}
+  function drawGrid(){
+    const list=subset();
+    g.innerHTML=list.map((x,i)=>`<button class="gallery-thumb" data-i="${i}" aria-label="Otvori fotografiju"><img src="${purl(x.p.storage_path)}" alt="${srName[x.u.name]||x.u.name}"></button>`).join("");
+    g.querySelectorAll("button").forEach(b=>b.onclick=()=>openLight(list,+b.dataset.i));
+  }
+  function drawFeatured(){
+    const list=subset(); if(!featured||!list.length)return;
+    const picks=[0,Math.min(1,list.length-1),Math.min(2,list.length-1),Math.min(3,list.length-1),Math.min(4,list.length-1)];
+    featured.innerHTML=picks.map((n,i)=>{const x=list[n];return `<button class="gallery-feature gallery-feature-${i+1}" data-i="${n}" aria-label="Otvori fotografiju"><img src="${purl(x.p.storage_path)}" alt="${srName[x.u.name]||x.u.name}">${i===4&&list.length>5?`<span>+${list.length-4} fotografija</span>`:""}</button>`}).join("");
+    featured.querySelectorAll("button").forEach(b=>b.onclick=()=>openLight(list,+b.dataset.i));
+  }
+  if(filters){
+    const buttons=[`<button class="active" data-unit="">Sve fotografije (${total})</button>`,...units.map(u=>`<button data-unit="${u.name}">${labels[u.name]||srName[u.name]||u.name} (${u.photos.length})</button>`)];
+    filters.innerHTML=buttons.join("");
+    filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{current=b.dataset.unit||null;filters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));drawFeatured();drawGrid();if(!g.hidden)g.scrollIntoView({behavior:"smooth",block:"start"})});
+  }
+  drawFeatured();drawGrid();
+  if(showAll){showAll.textContent=`Prikaži svih ${total} fotografija`;showAll.onclick=()=>{g.hidden=!g.hidden;featured.hidden=!g.hidden;showAll.textContent=g.hidden?`Prikaži svih ${total} fotografija`:"Vrati pregled galerije";if(!g.hidden)g.scrollIntoView({behavior:"smooth",block:"start"})}}
 }
 function setupInquiryForm(){const f=document.getElementById("inquiry-form");if(!f)return;f.addEventListener("submit",async e=>{e.preventDefault();const d=new FormData(f),s=document.getElementById("form-status"),b=f.querySelector('button[type="submit"]'),ci=d.get("checkin"),co=d.get("checkout");if(ci&&co&&co<=ci){s.textContent="Datum odlaska mora biti posle datuma dolaska.";return}b.disabled=true;s.textContent="Šaljemo upit…";const{error}=await db.from("contact_inquiries").insert({name:(d.get("name")||"").trim(),email:(d.get("email")||"").trim()||null,phone:(d.get("phone")||"").trim()||null,message:(d.get("message")||"").trim(),desired_check_in:ci||null,desired_check_out:co||null,guests:d.get("guests")?Number(d.get("guests")):null});if(error){s.textContent="Upit trenutno nije poslat. Pokušajte ponovo.";b.disabled=false;return}f.reset();s.textContent="Hvala. Vaš upit je uspješno poslat.";b.disabled=false})}setupInquiryForm();
 document.querySelector(".menu-toggle")?.addEventListener("click",()=>document.body.classList.toggle("mobile-open"));document.querySelectorAll("#booking-form").forEach(f=>f.onsubmit=e=>{e.preventDefault();let d=new FormData(f),a=d.get("arrival"),o=d.get("departure"),r=document.getElementById("booking-result");if(r)r.innerHTML=o<=a?"Datum odlaska mora biti posle datuma dolaska.":`<p><b>${a} — ${o}</b><br>Raspoloživost i cijena biće prikazane nakon povezivanja channel managera.</p>`});load();
