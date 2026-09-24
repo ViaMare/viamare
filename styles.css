@@ -5,3 +5,12 @@
 
 /* Stable apartment lightbox */
 .lightbox{padding:18px;box-sizing:border-box;grid-template-columns:64px minmax(0,1fr) 64px}.lightbox figure{margin:0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.lightbox figure img{display:block;width:auto;height:auto;max-width:min(1100px,82vw);max-height:76vh;object-fit:contain}.lightbox figcaption{width:100%;max-width:900px;display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:12px;line-height:1.35}.lightbox .lb-prev,.lightbox .lb-next{cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center}.lightbox .lb-close{font-size:44px;line-height:1}.lb-availability{display:inline-block;margin:0}@media(max-width:700px){.lightbox{padding:12px;grid-template-columns:44px minmax(0,1fr) 44px}.lightbox figure img{max-width:calc(100vw - 112px);max-height:68vh}.lightbox button{font-size:38px}.lightbox .lb-close{right:10px;top:6px;font-size:42px}.lightbox figcaption{font-size:14px;gap:10px}.lb-availability{padding:10px 13px;font-size:12px}}
+
+/* Compact availability form */
+.checkout-card{display:grid;gap:16px}
+.checkout-card h2{margin:0 0 4px}
+.stay-dates{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stay-dates label,.unit-select-label{display:grid;gap:7px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.checkout-card input,.checkout-card select{box-sizing:border-box;height:48px;padding:0 13px}
+.checkout-card input[type="date"]{min-width:0}
+@media(max-width:560px){.stay-dates{grid-template-columns:1fr 1fr;gap:8px}.checkout-card input,.checkout-card select{height:44px;padding:0 9px}.stay-dates label,.unit-select-label{font-size:11px}}
