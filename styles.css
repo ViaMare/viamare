@@ -148,3 +148,6 @@
 .checkout-grid{align-items:start}.checkout-card{padding-top:28px;padding-bottom:28px}.checkout-card h2{margin-top:0;margin-bottom:14px}.checkout-card input,.checkout-card select{margin-bottom:10px}
 @media(min-width:901px){.page-hero{padding:55px 0!important}.page-hero h1{margin:5px 0 8px}.section:has(.checkout-grid){padding:35px 0!important}.checkout-grid{grid-template-columns:1.15fr .85fr!important;gap:30px!important}}
 @media(max-width:700px){.payment-unit-preview{grid-template-columns:110px 1fr}.payment-unit-photo{height:85px}}
+
+/* Lower the desktop reservation summary slightly */
+@media(min-width:901px){.checkout-grid .order-card{margin-top:28px!important}}
