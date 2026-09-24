@@ -8,6 +8,16 @@ const SB="https://arcjsoupsfdoosspfgvb.supabase.co",KEY="sb_publishable_EfnLnRBd
     return (srName[a.name]||a.name).localeCompare(srName[b.name]||b.name,"sr");
   });
   select.innerHTML=ordered.map(u=>`<option value="${u.name}"${u.name===requested?" selected":""}>${srName[u.name]||u.name}</option>`).join("");
+  const arrival=document.querySelector('#checkout-form [name="arrival"]'),departure=document.querySelector('#checkout-form [name="departure"]');
+  function updateBookingSummary(){
+    const u=units.find(x=>x.name===select.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo"),dates=document.getElementById("summary-dates");
+    if(title)title.textContent=u?(srName[u.name]||u.name):"Izaberite tip smještaja";
+    if(photo)photo.innerHTML=u&&u.photos&&u.photos[0]?`<img src="${purl(u.photos[0].storage_path)}" alt="${srName[u.name]||u.name}">`:"";
+    if(dates){const a=arrival?.value,d=departure?.value;dates.textContent=a&&d?`${a.split("-").reverse().join(".")} – ${d.split("-").reverse().join(".")}`:"—";}
+  }
+  select.addEventListener("change",updateBookingSummary);
+  arrival?.addEventListener("change",updateBookingSummary);departure?.addEventListener("change",updateBookingSummary);
+  updateBookingSummary();
 }
 const propertyPhotos=[{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/0fa8bb52.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:0,alt_text:"Apartments Via Mare"}]; /* fallback */ const legacyPropertyPhotos=[
  {storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/0fa8bb52.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:1,alt_text:"Apartments Via Mare — objekat"},
