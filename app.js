@@ -22,15 +22,13 @@ propertyPhotos.push(...legacyPropertyPhotos);
 function renderFullGallery(){
  const g=document.getElementById("full-gallery"),f=document.getElementById("gallery-featured"),filters=document.getElementById("gallery-filters"),toggle=document.getElementById("gallery-show-all");
  if(!g)return;
- const seen=new Set(),all=[];
- const propertyUnit={name:"Objekat i dvorište"};
- propertyPhotos.forEach(p=>{all.push({u:propertyUnit,p})});
+ const seen=new Set(),all=[],propertyUnit={name:"Objekat i dvorište"};
+ propertyPhotos.forEach(p=>all.push({u:propertyUnit,p}));
  units.forEach(u=>(u.photos||[]).forEach(p=>{
    const file=(p.storage_path.split("/").pop()||p.storage_path).toLowerCase();
-   const base=file.replace(/\.[^.]+$/,"").replace(/[-_ ]?(copy|duplicate|dup)[-_ ]?\d*$/,"");
-   const hash=(base.match(/[0-9a-f]{12,}$/)||[])[0]||base;
-   if(seen.has(hash))return;
-   seen.add(hash);all.push({u,p});
+   const base=file.replace(/\.[^.]+$/,"");
+   const m=base.match(/[_-]([0-9a-f]{8,})$/),key=m?m[1]:base;
+   if(seen.has(key))return; seen.add(key); all.push({u,p});
  }));
  let selected="";
  const list=()=>selected?all.filter(x=>x.u.name===selected):all;
@@ -39,10 +37,12 @@ function renderFullGallery(){
    if(f){f.innerHTML=a.slice(0,5).map((x,i)=>'<button class="gallery-feature gallery-feature-'+(i+1)+'" data-i="'+i+'"><img src="'+purl(x.p.storage_path)+'" alt="Apartments Via Mare">'+(i===4&&a.length>5?'<span>+'+(a.length-5)+' fotografija</span>':'')+'</button>').join("");f.querySelectorAll("button").forEach(b=>b.onclick=()=>openLight(a,+b.dataset.i))}
    g.innerHTML=a.map((x,i)=>'<button class="gallery-thumb" data-i="'+i+'"><img src="'+purl(x.p.storage_path)+'" alt="Apartments Via Mare"></button>').join("");
    g.querySelectorAll("button").forEach(b=>b.onclick=()=>openLight(a,+b.dataset.i));
+   g.hidden=true;
+   if(toggle)toggle.textContent='Prikaži sve fotografije ('+a.length+')';
  }
- if(filters){filters.innerHTML='<button class="active" data-u="">Sve fotografije ('+all.length+')</button><button data-u="Objekat i dvorište">Objekat i dvorište</button>'+units.map(u=>'<button data-u="'+u.name+'">'+(srName[u.name]||u.name)+'</button>').join("");filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{selected=b.dataset.u;filters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));paint()})}
+ if(filters){filters.innerHTML='<button class="active" data-u="">Sve</button><button data-u="Objekat i dvorište">Objekat i dvorište</button>'+units.map(u=>'<button data-u="'+u.name+'">'+(srName[u.name]||u.name)+'</button>').join("");filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{selected=b.dataset.u;filters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));paint()})}
  paint();
- if(toggle){toggle.textContent='Prikaži sve fotografije ('+all.length+')';toggle.onclick=()=>{g.hidden=!g.hidden;f.hidden=!g.hidden;toggle.textContent=g.hidden?'Prikaži sve fotografije ('+all.length+')':'Vrati pregled galerije'}}
+ if(toggle)toggle.onclick=()=>{g.hidden=!g.hidden;f.hidden=!g.hidden;toggle.textContent=g.hidden?'Prikaži sve fotografije ('+list().length+')':'Vrati kolaž'};
 }
 function setupInquiryForm(){const f=document.getElementById("inquiry-form");if(!f)return;f.addEventListener("submit",async e=>{e.preventDefault();const d=new FormData(f),s=document.getElementById("form-status"),b=f.querySelector('button[type="submit"]'),ci=d.get("checkin"),co=d.get("checkout");if(ci&&co&&co<=ci){s.textContent="Datum odlaska mora biti posle datuma dolaska.";return}b.disabled=true;s.textContent="Šaljemo upit…";const{error}=await db.from("contact_inquiries").insert({name:(d.get("name")||"").trim(),email:(d.get("email")||"").trim()||null,phone:(d.get("phone")||"").trim()||null,message:(d.get("message")||"").trim(),desired_check_in:ci||null,desired_check_out:co||null,guests:d.get("guests")?Number(d.get("guests")):null});if(error){s.textContent="Upit trenutno nije poslat. Pokušajte ponovo.";b.disabled=false;return}f.reset();s.textContent="Hvala. Vaš upit je uspješno poslat.";b.disabled=false})}setupInquiryForm();
 document.querySelector(".menu-toggle")?.addEventListener("click",()=>document.body.classList.toggle("mobile-open"));document.querySelectorAll("#booking-form").forEach(f=>f.onsubmit=e=>{e.preventDefault();let d=new FormData(f),a=d.get("arrival"),o=d.get("departure"),r=document.getElementById("booking-result");if(r)r.innerHTML=o<=a?"Datum odlaska mora biti posle datuma dolaska.":`<p><b>${a} — ${o}</b><br>Raspoloživost i cijena biće prikazane nakon povezivanja channel managera.</p>`});if(document.getElementById("full-gallery"))renderFullGallery();load();
