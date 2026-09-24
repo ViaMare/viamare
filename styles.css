@@ -71,3 +71,21 @@
 .full-gallery .gallery-thumb img{display:block;width:100%;height:100%;object-fit:cover}
 @media(max-width:900px){.full-gallery{width:calc(100vw - 28px);grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}}
 @media(max-width:600px){.full-gallery{width:calc(100vw - 20px);grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}}
+
+/* Editorial gallery agreed layout */
+.gallery-editorial{background:#f7f2e9}
+.gallery-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.gallery-heading h2{margin:8px 0 0;font:400 clamp(38px,4vw,58px)/1.05 Georgia,serif}
+.gallery-show-all{border:1px solid #b7832f;background:transparent;color:#8a6426;padding:13px 18px;font-weight:700;cursor:pointer}
+.gallery-filters{display:flex;gap:8px;overflow-x:auto;padding:0 0 20px;scrollbar-width:thin}
+.gallery-filters button{white-space:nowrap;border:1px solid #d7cdbd;background:#fff;color:#153448;padding:10px 14px;cursor:pointer}
+.gallery-filters button.active{background:#153448;color:#fff;border-color:#153448}
+.gallery-featured{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:240px 240px;gap:10px}
+.gallery-feature{position:relative;border:0;padding:0;background:#ddd;overflow:hidden;cursor:pointer;border-radius:3px}
+.gallery-feature-1{grid-row:1/3}
+.gallery-feature img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .25s ease}
+.gallery-feature:hover img{transform:scale(1.02)}
+.gallery-feature span{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,38,55,.55);color:#fff;font:700 18px Arial,sans-serif}
+.gallery-editorial .full-gallery{margin-top:10px}
+@media(max-width:850px){.gallery-heading{align-items:flex-start;flex-direction:column}.gallery-featured{grid-template-columns:1.5fr 1fr;grid-template-rows:190px 190px 190px}.gallery-feature-1{grid-row:1/3}.gallery-feature-5{grid-column:1/3}}
+@media(max-width:560px){.gallery-featured{grid-template-columns:1fr 1fr;grid-template-rows:210px 130px 130px}.gallery-feature-1{grid-column:1/3;grid-row:auto}.gallery-feature-5{grid-column:auto}.gallery-show-all{width:100%}}
