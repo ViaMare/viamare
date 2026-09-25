@@ -27,6 +27,8 @@ async function loadEnglish(){
  const {data,error}=await db.from("unit_types").select("*,photos(*)").order("sort_order");
  if(error||!data)return;
  const units=data;
+ const hero=document.getElementById("hero-media");
+ if(hero){const hp=units.flatMap(u=>(u.photos||[]).map(p=>({u,p}))).sort((a,b)=>(a.p.sort_order||0)-(b.p.sort_order||0))[0];if(hp)hero.style.backgroundImage='url("'+photoUrl(hp.p.storage_path)+'")';}
  const slugs={"Standard Triple Studio":"standard-triple-studio","Triple Studio with Balcony":"triple-studio-with-balcony","Triple Studio with Sea View":"triple-studio-with-sea-view","Standard One Bedroom Apartment":"standard-one-bedroom-apartment","One-Bedroom Apartment with Balcony":"one-bedroom-apartment-with-balcony","One-Bedroom Apartment with Sea View":"one-bedroom-apartment-with-sea-view","Apartment with Sea View - (Attic)":"apartment-with-sea-view-attic"};
  const grid=document.getElementById("unit-grid");
  if(grid)grid.innerHTML=units.map(u=>{const p=(u.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))[0],slug=slugs[u.name]||"";return '<article class="suite-card"><a class="suite-image" href="'+VM_EN_BASE+slug+'/">'+(p?'<img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':'')+'</a><div class="suite-copy"><span class="kicker">APARTMENTS VIA MARE</span><h3>'+(VM_EN_NAMES[u.name]||u.name)+'</h3><p class="suite-meta">'+(VM_EN_META[u.name]||'')+'</p><a class="text-link" href="'+VM_EN_BASE+slug+'/">View accommodation →</a></div></article>'}).join("");
@@ -42,3 +44,17 @@ document.querySelector(".menu-toggle")?.addEventListener("click",()=>document.bo
 document.getElementById("checkout-form")?.addEventListener("submit",e=>{e.preventDefault();const f=new FormData(e.currentTarget),a=f.get("arrival"),d=f.get("departure"),s=document.getElementById("payment-status");if(!a||!d||!f.get("unit")||!f.get("name")||!f.get("email")){s.textContent="Please complete all required fields.";return}if(d<=a){s.textContent="Departure must be after arrival.";return}s.textContent="Online card payment is not active yet. No reservation has been charged or submitted.";});
 document.getElementById("inquiry-form")?.addEventListener("submit",async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f),s=document.getElementById("form-status");if(!db){s.textContent="The enquiry service is temporarily unavailable.";return}const {error}=await db.from("contact_inquiries").insert({name:(d.get("name")||"").trim(),email:(d.get("email")||"").trim(),phone:(d.get("phone")||"").trim()||null,message:(d.get("message")||"").trim()});s.textContent=error?"Your enquiry could not be sent. Please try again.":"Thank you. Your enquiry has been sent.";if(!error)f.reset();});
 loadEnglish();
+
+function vmEnLightbox(images,start=0){
+ if(!images.length)return;let i=start;
+ const box=document.createElement("div");box.className="lightbox";box.innerHTML='<button class="lb-prev" aria-label="Previous">‹</button><figure><img><figcaption></figcaption></figure><button class="lb-next" aria-label="Next">›</button><button class="lb-close" aria-label="Close">×</button>';
+ const img=box.querySelector("img"),cap=box.querySelector("figcaption");
+ const paint=()=>{img.src=images[i].src;cap.textContent=images[i].alt||""};
+ box.querySelector(".lb-prev").onclick=()=>{i=(i-1+images.length)%images.length;paint()};
+ box.querySelector(".lb-next").onclick=()=>{i=(i+1)%images.length;paint()};
+ box.querySelector(".lb-close").onclick=()=>box.remove();
+ box.onclick=e=>{if(e.target===box)box.remove()};
+ document.addEventListener("keydown",function key(e){if(!box.isConnected){document.removeEventListener("keydown",key);return}if(e.key==="Escape")box.remove();if(e.key==="ArrowLeft")box.querySelector(".lb-prev").click();if(e.key==="ArrowRight")box.querySelector(".lb-next").click()});
+ document.body.appendChild(box);paint();
+}
+document.addEventListener("click",e=>{const b=e.target.closest(".unit-gallery button,.gallery-featured button,.full-gallery button");if(!b)return;const scope=b.closest(".unit-gallery,.gallery-featured,.full-gallery"),buttons=[...scope.querySelectorAll("button")],images=buttons.map(x=>x.querySelector("img")).filter(Boolean).map(x=>({src:x.src,alt:x.alt}));const bi=buttons.indexOf(b);vmEnLightbox(images,Math.max(0,bi));});
