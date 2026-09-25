@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
-define('VM_THEME_VERSION', '6.0.0-dev.4');
+define('VM_THEME_VERSION', '6.0.0-dev.5');
 require_once get_template_directory() . '/inc/english.php';
 
 add_action('after_setup_theme', function () {
@@ -28,15 +28,15 @@ function vm_render_bundled_page() {
     if (is_admin()) return;
     $rawPath = trim((string)parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
     $homePath0 = trim((string)parse_url(home_url('/'), PHP_URL_PATH), '/');
-    if ($homePath0 && str_starts_with($rawPath, $homePath0)) $rawPath = trim(substr($rawPath, strlen($homePath0)), '/');
-    if ($rawPath === 'en' || str_starts_with($rawPath, 'en/')) {
+    if ($homePath0 && strpos($rawPath, $homePath0) === 0) $rawPath = trim(substr($rawPath, strlen($homePath0)), '/');
+    if ($rawPath === 'en' || strpos($rawPath, 'en/') === 0) {
         $enSlug = $rawPath === 'en' ? '' : trim(substr($rawPath, 3), '/');
         $doc = vm_en_page($enSlug);
         if ($doc !== null) { echo $doc; exit; }
     }
     $path = trim((string)parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
     $homePath = trim((string)parse_url(home_url('/'), PHP_URL_PATH), '/');
-    if ($homePath && str_starts_with($path, $homePath)) $path = trim(substr($path, strlen($homePath)), '/');
+    if ($homePath && strpos($path, $homePath) === 0) $path = trim(substr($path, strlen($homePath)), '/');
     $slug = $path === '' ? '' : basename($path, '.html');
     $map = vm_route_map();
     if (!array_key_exists($slug, $map)) return;
