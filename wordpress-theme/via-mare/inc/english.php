@@ -13,7 +13,8 @@ function vm_en_nav($active='') {
 }
 function vm_en_header($active='') {
   $t=trailingslashit(get_template_directory_uri());
-  return '<div class="utility"><div class="container"><span>Buljarica · Montenegro · <span class="category-stars" aria-label="4 stars">★★★★</span></span><div><a href="'.esc_url(home_url('/')).'">MNE/SRB</a><a href="'.esc_url(home_url('/en/')).'">EN</a></div></div></div><header><div class="container header-inner"><a class="logo" href="'.esc_url(home_url('/en/')).'"><img src="'.esc_url($t.'assets/images/via-mare-logo.svg').'" alt="Apartments Via Mare"></a><button class="menu-toggle" aria-label="Open menu">☰</button><nav class="main-nav">'.vm_en_nav($active).'</nav><a class="header-book" href="'.esc_url(home_url('/en/booking/')).'">Book now</a></div></header>';
+  $logo='https://raw.githubusercontent.com/ViaMare/viamare/main/via_mare_upscaled_4x%20%281%29.jpg';
+  return '<div class="utility"><div class="container"><span>Buljarica · Montenegro · <span class="category-stars" aria-label="4 stars">★★★★</span></span><div><a href="'.esc_url(home_url('/')).'">MNE/SRB</a><a href="'.esc_url(home_url('/en/')).'">EN</a></div></div></div><header><div class="container header-inner"><a class="logo" href="'.esc_url(home_url('/en/')).'"><img src="'.esc_url($logo).'" alt="Apartments Via Mare"></a><button class="menu-toggle" aria-label="Open menu">☰</button><nav class="main-nav">'.vm_en_nav($active).'</nav><a class="header-book" href="'.esc_url(home_url('/en/booking/')).'">Book now</a></div></header>';
 }
 function vm_en_footer() {
  return '<footer><div class="container"><b>APARTMENTS VIA MARE <span class="category-stars" aria-label="4 stars">★★★★</span></b><p>Buljarica bb · 85300 Petrovac na Moru · Montenegro</p></div></footer>';
