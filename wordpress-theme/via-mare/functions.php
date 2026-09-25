@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
-define('VM_THEME_VERSION', '6.0.0-dev.5');
+define('VM_THEME_VERSION', '6.0.0-dev.6');
 require_once get_template_directory() . '/inc/english.php';
 
 add_action('after_setup_theme', function () {
@@ -49,6 +49,17 @@ function vm_render_bundled_page() {
     // All presentation assets are served from the installed theme, never fetched from GitHub.
     $html = preg_replace('~<link rel="stylesheet" href="styles\.css(?:\?[^"]*)?">~', '<link rel="stylesheet" href="'.$theme.'assets/css/site.css?v='.VM_THEME_VERSION.'">', $html);
     $html = preg_replace('~<script src="app\.js(?:\?[^"]*)?"></script>~', '<script src="'.$theme.'assets/js/site.js?v='.VM_THEME_VERSION.'"></script>', $html);
+
+    // Keep the MNE/SRB / EN language selector visible on every regional-language page.
+    $en_url = home_url('/en/');
+    $lang_switch = '<div class="vm-language-switch"><a class="active" href="'.esc_url(home_url('/')).'">MNE/SRB</a><span aria-hidden="true"> / </span><a href="'.esc_url($en_url).'">EN</a></div>';
+    if (strpos($html, 'class="utility"') !== false) {
+        $html = preg_replace('~(<div class="utility"><div class="container">.*?)(</div></div>)~s', '$1'.$lang_switch.'$2', $html, 1);
+        $html = preg_replace('~<div><button class="lang active" data-lang="sr">ME</button><button class="lang" data-lang="en">EN</button><a href="kontakt\.html">Kontakt</a></div>~', $lang_switch, $html, 1);
+    } else {
+        $utility = '<div class="utility"><div class="container"><span>Buljarica · Montenegro · <span class="category-stars" aria-label="4 zvjezdice">★★★★</span></span>'.$lang_switch.'</div></div>';
+        $html = preg_replace('~(<body[^>]*>)~i', '$1'.$utility, $html, 1);
+    }
 
     // Route internal static links through WordPress clean URLs.
     foreach ($map as $s => $source) {
