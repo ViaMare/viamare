@@ -151,3 +151,23 @@
 
 /* Lower the desktop reservation summary slightly */
 @media(min-width:901px){.checkout-grid .order-card{margin-top:28px!important}}
+
+
+/* WordPress 6.0 mobile header hardening */
+@media(max-width:850px){
+  .utility .container{height:auto;min-height:38px;gap:10px;flex-wrap:wrap;padding:7px 0}
+  .header-inner{height:auto;min-height:92px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 0}
+  .logo{margin:0;min-width:0}
+  .logo img{width:min(180px,100%);height:76px}
+  .menu-toggle{display:block;margin:0}
+  .header-book{margin:0;white-space:nowrap}
+  .main-nav{top:100%;z-index:50}
+}
+@media(max-width:520px){
+  .header-inner{grid-template-columns:minmax(0,1fr) auto}
+  .header-book{grid-column:1/-1;text-align:center;width:100%}
+}
+
+/* Gallery hero/banner parity */
+body.vm-page-gallery .page-hero,
+.gallery-page .page-hero{background:var(--deep);color:#fff}
