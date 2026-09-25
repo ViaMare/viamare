@@ -22,7 +22,28 @@ function vm_en_document($title,$active,$body,$bodyClass='') {
  $t=trailingslashit(get_template_directory_uri());
  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.esc_html($title).' · Apartments Via Mare</title><link rel="stylesheet" href="'.esc_url($t.'assets/css/site.css?v='.VM_THEME_VERSION).'"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body class="'.esc_attr($bodyClass).'">'.vm_en_header($active).'<main>'.$body.'</main>'.vm_en_footer().'<script src="'.esc_url($t.'assets/js/site-en.js?v='.VM_THEME_VERSION).'"></script></body></html>';
 }
+
+function vm_en_unit_data() {
+ return [
+ 'standard-triple-studio'=>['Standard Triple Studio','30 m²','3 guests','Ground / 1st floor','Balcony'],
+ 'triple-studio-with-balcony'=>['Triple Studio with Balcony','30 m²','3 guests','Ground / 1st floor','Balcony'],
+ 'triple-studio-with-sea-view'=>['Triple Studio with Sea View','30 m²','3 guests','2nd floor','Sea view'],
+ 'standard-one-bedroom-apartment'=>['Standard One-Bedroom Apartment','40 m²','4 guests','Ground / 1st floor','Balcony'],
+ 'one-bedroom-apartment-with-balcony'=>['One-Bedroom Apartment with Balcony','40 m²','4 guests','Ground / 1st floor','Balcony'],
+ 'one-bedroom-apartment-with-sea-view'=>['One-Bedroom Apartment with Sea View','40 m²','4 guests','2nd floor','Sea view'],
+ 'apartment-with-sea-view-attic'=>['Sea View Apartment – Attic','35 m²','3 guests','Attic','Sea view']
+ ];
+}
+function vm_en_unit_page($slug) {
+ $all=vm_en_unit_data(); if(!isset($all[$slug])) return null; $u=$all[$slug];
+ $fac=['Air conditioning','Free Wi-Fi','Private bathroom','Shower','Hair dryer','Towels and bed linen','Flat-screen TV','Refrigerator','Cooktop','Kitchenware','Private parking',$u[4]];
+ $lis=''; foreach($fac as $x)$lis.='<li>'.esc_html($x).'</li>';
+ $b='<section class="unit-hero"><div class="container"><span class="kicker light">APARTMENTS VIA MARE</span><h1>'.esc_html($u[0]).'</h1><p>'.esc_html($u[1].' · '.$u[2].' · '.$u[3].' · '.$u[4]).'</p></div></section><section class="section"><div class="container unit-layout"><div><span class="kicker">ACCOMMODATION</span><h2>'.esc_html($u[0]).'</h2><p class="large">Comfortable accommodation at Apartments Via Mare in peaceful Buljarica, close to the Adriatic coast.</p><ul class="facility-grid">'.$lis.'</ul></div><aside class="unit-cta"><h2>Check your stay</h2><p>Choose your dates and continue to the direct booking page.</p><a class="gold-btn" href="'.esc_url(home_url('/en/booking/?unit='.$slug)).'">Check availability</a></aside></div><div class="container"><div class="unit-gallery" data-en-unit="'.esc_attr($slug).'"></div></div></section>';
+ return vm_en_document($u[0],'accommodation',$b,'vm-en-unit');
+}
+
 function vm_en_page($slug) {
+ $unitDoc=vm_en_unit_page($slug); if($unitDoc!==null) return $unitDoc;
  switch($slug){
  case '':
  case 'home':
