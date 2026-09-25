@@ -22,6 +22,8 @@ function vm_en_footer() {
 function vm_en_document($title,$active,$body,$bodyClass='') {
  $t=trailingslashit(get_template_directory_uri());
  $base=trailingslashit(home_url('/en/'));
+ $css_ver=(string) @filemtime(get_template_directory().'/assets/css/site.css');
+ $js_ver=(string) @filemtime(get_template_directory().'/assets/js/site-en.js');
  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.esc_html($title).' · Apartments Via Mare</title><link rel="stylesheet" href="'.esc_url($t.'assets/css/site.css?v='.VM_THEME_VERSION).'"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>window.VM_EN_BASE='.wp_json_encode($base).';</script></head><body class="'.esc_attr($bodyClass).'">'.vm_en_header($active).'<main>'.$body.'</main>'.vm_en_footer().'<script src="'.esc_url($t.'assets/js/site-en.js?v='.VM_THEME_VERSION).'"></script></body></html>';
 }
 
