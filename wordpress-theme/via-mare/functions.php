@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
-define('VM_THEME_VERSION', '6.0.0-dev.8');
+define('VM_THEME_VERSION', '6.0.0-dev.9');
 require_once get_template_directory() . '/inc/english.php';
 
 add_action('after_setup_theme', function () {
@@ -50,10 +50,9 @@ function vm_render_bundled_page() {
     $html = preg_replace('~<link rel="stylesheet" href="styles\.css(?:\?[^"]*)?">~', '<link rel="stylesheet" href="'.$theme.'assets/css/site.css?v='.VM_THEME_VERSION.'">', $html);
     $html = preg_replace('~<script src="app\.js(?:\?[^"]*)?"></script>~', '<script src="'.$theme.'assets/js/site.js?v='.VM_THEME_VERSION.'"></script>', $html);
 
-    // Serve the bundled Via Mare logo from the installed theme on every regional page.
-    $logo = esc_url($theme.'assets/images/via-mare-logo.svg');
-    $html = preg_replace('~src="via-mare-logo\\.svg"~', 'src="'.$logo.'"', $html);
-    $html = preg_replace('~src="via_mare_upscaled_4x \\(1\\)\\.jpg"~', 'src="'.$logo.'"', $html);
+    // Preserve the original Via Mare logo used by the source site.
+    $original_logo = esc_url('https://raw.githubusercontent.com/ViaMare/viamare/main/via_mare_upscaled_4x%20%281%29.jpg');
+    $html = preg_replace('~src="(?:via-mare-logo\\.svg|via_mare_upscaled_4x \\(1\\)\\.jpg)"~', 'src="'.$original_logo.'"', $html);
 
     // Standardize the top navy utility bar on every MNE/SRB page.
     // It must always contain Buljarica, Montenegro, four stars and the language switch.
