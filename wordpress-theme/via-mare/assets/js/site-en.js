@@ -24,7 +24,7 @@ const db=window.supabase?.createClient(SB_URL,SB_KEY);
 function photoUrl(p){if(!p)return"";if(/^https?:/.test(p))return p;return SB_URL+"/storage/v1/object/public/accommodation-photos/"+p}
 async function loadEnglish(){
  if(!db)return;
- const {data,error}=await db.from("unit_types").select("*,photos(*)").order("sort_order");
+ const {data,error}=await db.from("unit_types").select("*,photos(*)").order("name");
  if(error||!data)return;
  const units=data;
  const hero=document.getElementById("hero-media");
