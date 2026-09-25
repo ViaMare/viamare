@@ -24,8 +24,12 @@ const db=window.supabase?.createClient(SB_URL,SB_KEY);
 function photoUrl(p){if(!p)return"";if(/^https?:/.test(p))return p;return SB_URL+"/storage/v1/object/public/accommodation-photos/"+p}
 async function loadEnglish(){
  if(!db)return;
- const {data,error}=await db.from("unit_types").select("*,photos(*)").order("name");
- if(error||!data)return;
+ const {data,error}=await db.from("unit_types").select("*").order("name");
+ if(error||!data){console.error("Via Mare unit_types:",error);return;}
+ const {data:photoRows,error:photoError}=await db.from("photos").select("*").order("sort_order");
+ if(photoError){console.error("Via Mare photos:",photoError);return;}
+ const byType={};(photoRows||[]).forEach(p=>{if(!byType[p.unit_type_id])byType[p.unit_type_id]=[];byType[p.unit_type_id].push(p)});
+ data.forEach(u=>u.photos=byType[u.id]||[]);
  const units=data;
  const hero=document.getElementById("hero-media");
  if(hero){const hp=units.flatMap(u=>(u.photos||[]).map(p=>({u,p}))).sort((a,b)=>(a.p.sort_order||0)-(b.p.sort_order||0))[0];if(hp)hero.style.backgroundImage='url("'+photoUrl(hp.p.storage_path)+'")';}
