@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
-define('VM_THEME_VERSION', '6.0.0-dev.9');
+define('VM_THEME_VERSION', '6.0.0-dev.12');
 require_once get_template_directory() . '/inc/english.php';
 
 add_action('after_setup_theme', function () {
@@ -45,10 +45,12 @@ function vm_render_bundled_page() {
     if (!is_readable($file)) return;
     $html = file_get_contents($file);
     $theme = trailingslashit(get_template_directory_uri());
+    $css_ver = (string) @filemtime(get_template_directory() . '/assets/css/site.css');
+    $js_ver = (string) @filemtime(get_template_directory() . '/assets/js/site.js');
 
     // All presentation assets are served from the installed theme, never fetched from GitHub.
-    $html = preg_replace('~<link rel="stylesheet" href="styles\.css(?:\?[^"]*)?">~', '<link rel="stylesheet" href="'.$theme.'assets/css/site.css?v='.VM_THEME_VERSION.'">', $html);
-    $html = preg_replace('~<script src="app\.js(?:\?[^"]*)?"></script>~', '<script src="'.$theme.'assets/js/site.js?v='.VM_THEME_VERSION.'"></script>', $html);
+    $html = preg_replace('~<link rel="stylesheet" href="styles\.css(?:\?[^"]*)?">~', '<link rel="stylesheet" href="'.$theme.'assets/css/site.css?v='.$css_ver.'">', $html);
+    $html = preg_replace('~<script src="app\.js(?:\?[^"]*)?"></script>~', '<script src="'.$theme.'assets/js/site.js?v='.$js_ver.'"></script>', $html);
 
     // Preserve the original Via Mare logo used by the source site.
     $original_logo = esc_url('https://raw.githubusercontent.com/ViaMare/viamare/main/via_mare_upscaled_4x%20%281%29.jpg');
