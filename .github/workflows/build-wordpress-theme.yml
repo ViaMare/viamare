@@ -1,0 +1,36 @@
+name: Build Via Mare WordPress Theme
+on:
+  push:
+    branches: [wordpress-development]
+    paths:
+      - 'wordpress-theme/via-mare/**'
+      - '.github/workflows/build-wordpress-theme.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate PHP
+        run: |
+          find wordpress-theme/via-mare -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Validate required theme files
+        run: |
+          test -f wordpress-theme/via-mare/style.css
+          test -f wordpress-theme/via-mare/functions.php
+          test -f wordpress-theme/via-mare/inc/english.php
+          test -f wordpress-theme/via-mare/assets/css/site.css
+          test -f wordpress-theme/via-mare/assets/js/site.js
+          test -f wordpress-theme/via-mare/assets/js/site-en.js
+          test -f wordpress-theme/via-mare/assets/images/via-mare-logo.svg
+          test -f wordpress-theme/via-mare/site/index.html
+      - name: Build installable ZIP
+        run: |
+          mkdir -p build
+          cd wordpress-theme
+          zip -r ../build/via-mare-wordpress-6.0-dev.zip via-mare -x '*.DS_Store'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: via-mare-wordpress-6.0-dev
+          path: build/via-mare-wordpress-6.0-dev.zip
+          if-no-files-found: error
