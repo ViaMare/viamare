@@ -1,4 +1,5 @@
 /* Via Mare English dynamic layer */
+const VM_EN_BASE=window.VM_EN_BASE||"/en/";
 const VM_EN_NAMES={
 "Standard Triple Studio":"Standard Triple Studio",
 "Triple Studio with Balcony":"Triple Studio with Balcony",
@@ -28,7 +29,7 @@ async function loadEnglish(){
  const units=data;
  const slugs={"Standard Triple Studio":"standard-triple-studio","Triple Studio with Balcony":"triple-studio-with-balcony","Triple Studio with Sea View":"triple-studio-with-sea-view","Standard One Bedroom Apartment":"standard-one-bedroom-apartment","One-Bedroom Apartment with Balcony":"one-bedroom-apartment-with-balcony","One-Bedroom Apartment with Sea View":"one-bedroom-apartment-with-sea-view","Apartment with Sea View - (Attic)":"apartment-with-sea-view-attic"};
  const grid=document.getElementById("unit-grid");
- if(grid)grid.innerHTML=units.map(u=>{const p=(u.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))[0],slug=slugs[u.name]||"";return '<article class="suite-card"><a class="suite-image" href="../'+slug+'/">'+(p?'<img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':'')+'</a><div class="suite-copy"><span class="kicker">APARTMENTS VIA MARE</span><h3>'+(VM_EN_NAMES[u.name]||u.name)+'</h3><p class="suite-meta">'+(VM_EN_META[u.name]||'')+'</p><a class="text-link" href="../'+slug+'/">View accommodation →</a></div></article>'}).join("");
+ if(grid)grid.innerHTML=units.map(u=>{const p=(u.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))[0],slug=slugs[u.name]||"";return '<article class="suite-card"><a class="suite-image" href="'+VM_EN_BASE+slug+'/">'+(p?'<img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':'')+'</a><div class="suite-copy"><span class="kicker">APARTMENTS VIA MARE</span><h3>'+(VM_EN_NAMES[u.name]||u.name)+'</h3><p class="suite-meta">'+(VM_EN_META[u.name]||'')+'</p><a class="text-link" href="'+VM_EN_BASE+slug+'/">View accommodation →</a></div></article>'}).join("");
 
  const ug=document.querySelector(".unit-gallery[data-en-unit]");
  if(ug){const wanted=ug.dataset.enUnit,match=units.find(u=>slugs[u.name]===wanted);if(match){const photos=(match.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));ug.innerHTML=photos.map(p=>'<button type="button"><img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[match.name]||match.name)+'"></button>').join("")}}
