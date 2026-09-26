@@ -121,5 +121,5 @@ document.getElementById("booking-form")?.addEventListener("submit",e=>{e.prevent
  const path=location.pathname.replace(/\/+$/,"");
  const slug=(path.split("/en/")[1]||"").split("/")[0];
  const map={about:"o-nama",accommodation:"smestaj",gallery:"galerija",beaches:"plaze",buljarica:"buljarica",contact:"kontakt",booking:"placanje","standard-triple-studio":"standard-triple-studio","triple-studio-with-balcony":"triple-studio-with-balcony","triple-studio-with-sea-view":"triple-studio-with-sea-view","standard-one-bedroom-apartment":"standard-one-bedroom-apartment","one-bedroom-apartment-with-balcony":"one-bedroom-apartment-with-balcony","one-bedroom-apartment-with-sea-view":"one-bedroom-apartment-with-sea-view","apartment-with-sea-view-attic":"apartment-with-sea-view-attic"};
- const base=VM_EN_BASE.replace(/en\/$/,"");a.href=base+(map[slug]?map[slug]+"/":"");
+ const base=VM_EN_BASE.replace(/en\/$/,"");a.href=base+(map[slug]?map[slug]+"/":"")+(slug==="booking"?location.search:"");
 })();
