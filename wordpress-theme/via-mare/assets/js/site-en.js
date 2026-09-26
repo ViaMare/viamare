@@ -50,13 +50,9 @@ function englishGalleryAll(units){
 }
 async function loadEnglish(){
  if(!db)return;
- const {data,error}=await db.from("unit_types").select("id,name,description,max_guests,active").eq("active",true).order("name");
+ const {data,error}=await db.from("unit_types").select("id,name,description,max_guests,photos(storage_path,sort_order)").eq("active",true).order("name");
  if(error||!data){console.error("Via Mare unit_types:",error);return;}
- const {data:photoRows,error:photoError}=await db.from("photos").select("*").order("sort_order");
- if(photoError){console.error("Via Mare photos:",photoError);return;}
- const byType={};(photoRows||[]).forEach(p=>{if(!byType[p.unit_type_id])byType[p.unit_type_id]=[];byType[p.unit_type_id].push(p)});
- data.forEach(u=>{u.photos=byType[u.id]||[];u.photos=cleanEnglishPhotos(u)});
- const units=data;
+ const units=(data||[]).map(u=>({...u,photos:cleanEnglishPhotos(u)}));
  const hero=document.getElementById("hero-media");
  if(hero){const hp=units.flatMap(u=>(u.photos||[]).map(p=>({u,p}))).sort((a,b)=>(a.p.sort_order||0)-(b.p.sort_order||0))[0];if(hp)hero.style.backgroundImage='url("'+photoUrl(hp.p.storage_path)+'")';}
  const slugs={"Standard Triple Studio":"standard-triple-studio","Triple Studio with Balcony":"triple-studio-with-balcony","Triple Studio with Sea View":"triple-studio-with-sea-view","Standard One Bedroom Apartment":"standard-one-bedroom-apartment","One-Bedroom Apartment with Balcony":"one-bedroom-apartment-with-balcony","One-Bedroom Apartment with Sea View":"one-bedroom-apartment-with-sea-view","Apartment with Sea View - (Attic)":"apartment-with-sea-view-attic"};
