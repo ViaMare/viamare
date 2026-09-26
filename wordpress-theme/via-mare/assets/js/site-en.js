@@ -18,6 +18,15 @@ const VM_EN_META={
 "One-Bedroom Apartment with Sea View":"40 m² · 4 guests · 2nd floor · Sea view",
 "Apartment with Sea View - (Attic)":"35 m² · 3 guests · Attic · Sea view"
 };
+const VM_EN_DESC={
+"Standard Triple Studio":"Comfortable triple studio with balcony, private bathroom and kitchenette.",
+"Triple Studio with Balcony":"Triple studio with balcony, private bathroom and kitchenette for a comfortable independent stay.",
+"Triple Studio with Sea View":"Triple studio with sea view, balcony, private bathroom and kitchenette.",
+"Standard One Bedroom Apartment":"Spacious one-bedroom apartment with balcony, private bathroom and kitchen.",
+"One-Bedroom Apartment with Balcony":"One-bedroom apartment with balcony, private bathroom and kitchen, suitable for up to four guests.",
+"One-Bedroom Apartment with Sea View":"One-bedroom apartment with sea view, balcony, private bathroom and kitchen.",
+"Apartment with Sea View - (Attic)":"Attic apartment with sea view, balcony, private bathroom and kitchenette."
+};
 const SB_URL="https://arcjsoupsfdoosspfgvb.supabase.co";
 const SB_KEY="sb_publishable_EfnLnRBdRqQ6JQHQdnxWIg_WUifgMhr";
 const db=window.supabase?.createClient(SB_URL,SB_KEY);
@@ -35,7 +44,7 @@ async function loadEnglish(){
  if(hero){const hp=units.flatMap(u=>(u.photos||[]).map(p=>({u,p}))).sort((a,b)=>(a.p.sort_order||0)-(b.p.sort_order||0))[0];if(hp)hero.style.backgroundImage='url("'+photoUrl(hp.p.storage_path)+'")';}
  const slugs={"Standard Triple Studio":"standard-triple-studio","Triple Studio with Balcony":"triple-studio-with-balcony","Triple Studio with Sea View":"triple-studio-with-sea-view","Standard One Bedroom Apartment":"standard-one-bedroom-apartment","One-Bedroom Apartment with Balcony":"one-bedroom-apartment-with-balcony","One-Bedroom Apartment with Sea View":"one-bedroom-apartment-with-sea-view","Apartment with Sea View - (Attic)":"apartment-with-sea-view-attic"};
  const grid=document.getElementById("unit-grid");
- if(grid)grid.innerHTML=units.map(u=>{const p=(u.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))[0],slug=slugs[u.name]||"";return '<article class="suite-card"><a class="suite-image" href="'+VM_EN_BASE+slug+'/">'+(p?'<img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':'')+'</a><div class="suite-copy"><span class="kicker">APARTMENTS VIA MARE</span><h3>'+(VM_EN_NAMES[u.name]||u.name)+'</h3><p>'+(u.description||'')+'</p><div class="suite-meta"><span>up to '+(u.max_guests||'')+' guests</span><span>'+(u.photos||[]).length+' photos</span></div><a class="text-link" href="'+VM_EN_BASE+slug+'/">View accommodation →</a></div></article>'}).join("");
+ if(grid)grid.innerHTML=units.map(u=>{const p=(u.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))[0],slug=slugs[u.name]||"";return '<article class="suite-card"><a class="suite-image" href="'+VM_EN_BASE+slug+'/">'+(p?'<img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':'')+'</a><div class="suite-copy"><span class="kicker">APARTMENTS VIA MARE</span><h3>'+(VM_EN_NAMES[u.name]||u.name)+'</h3><p>'+(VM_EN_DESC[u.name]||'')+'</p><div class="suite-meta"><span>up to '+(u.max_guests||'')+' guests</span><span>'+(u.photos||[]).length+' photos</span></div><a class="text-link" href="'+VM_EN_BASE+slug+'/">View accommodation →</a></div></article>'}).join("");
 
  const uh=document.querySelector("[data-en-unit-hero]");
  if(uh){const match=units.find(u=>slugs[u.name]===uh.dataset.enUnitHero);const p=match&&(match.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))[0];if(p){uh.style.position="relative";uh.style.backgroundImage='linear-gradient(rgba(15,44,63,.60),rgba(15,44,63,.60)),url("'+photoUrl(p.storage_path)+'")';uh.style.backgroundSize="cover";uh.style.backgroundPosition="center";}}
