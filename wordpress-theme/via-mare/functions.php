@@ -63,7 +63,7 @@ function vm_render_bundled_page() {
     $html = preg_replace('~<img(?![^>]*\balt=)([^>]*)>~i', '<img alt=""$1>', $html);
 
     // Preserve the original Via Mare logo used by the source site.
-    $original_logo = esc_url(trailingslashit(get_template_directory_uri()).'assets/images/via-mare-logo.svg');
+    $original_logo = esc_url(trailingslashit(get_template_directory_uri()).'assets/images/via_mare_upscaled_4x (1).jpg');
     $html = preg_replace('~src="(?:via-mare-logo\\.svg|via_mare_upscaled_4x \\(1\\)\\.jpg)"~', 'src="'.$original_logo.'"', $html);
 
     // Standardize the top navy utility bar on every MNE/SRB page.
