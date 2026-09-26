@@ -58,6 +58,10 @@ function vm_render_bundled_page() {
     $html = preg_replace('~<link rel="stylesheet" href="styles\.css(?:\?[^"]*)?">~', '<link rel="stylesheet" href="'.$theme.'assets/css/site.css?v='.$css_ver.'">', $html);
     $html = preg_replace('~<script src="app\.js(?:\?[^"]*)?"></script>~', '<script src="'.$theme.'assets/js/site.js?v='.$js_ver.'"></script>', $html);
 
+    // Normalize basic accessibility semantics in bundled MNE/SRB markup before canonical chrome is injected.
+    $html = preg_replace('~<button class="menu-toggle"(?![^>]*\btype=)~i', '<button type="button" class="menu-toggle"', $html);
+    $html = preg_replace('~<img(?![^>]*\balt=)([^>]*)>~i', '<img alt=""$1>', $html);
+
     // Preserve the original Via Mare logo used by the source site.
     $original_logo = esc_url(trailingslashit(get_template_directory_uri()).'assets/images/via-mare-logo.svg');
     $html = preg_replace('~src="(?:via-mare-logo\\.svg|via_mare_upscaled_4x \\(1\\)\\.jpg)"~', 'src="'.$original_logo.'"', $html);
