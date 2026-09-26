@@ -12,10 +12,10 @@ const SB="https://arcjsoupsfdoosspfgvb.supabase.co",KEY="sb_publishable_EfnLnRBd
   select.innerHTML=ordered.map((u,i)=>`<option value="${u.name}"${i===0?" selected":""}>${srName[u.name]||u.name}</option>`).join("");
   const arrival=document.querySelector('#checkout-form [name="arrival"]'),departure=document.querySelector('#checkout-form [name="departure"]');
   function updateBookingSummary(){
-    const u=units.find(x=>x.name===select.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo"),dates=document.getElementById("summary-dates");
+    const u=units.find(x=>x.name===select.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo"),dates=document.getElementById("summary-dates"),nights=document.getElementById("summary-nights");
     if(title)title.textContent=u?(srName[u.name]||u.name):"";
     if(photo)photo.innerHTML=u&&u.photos&&u.photos[0]?`<img src="${purl(u.photos[0].storage_path)}" alt="${srName[u.name]||u.name}">`:"";
-    if(dates){const a=arrival?.value,d=departure?.value;dates.textContent=a&&d?`${a.split("-").reverse().join(".")} – ${d.split("-").reverse().join(".")}`:"—";}
+    if(dates){const a=arrival?.value,d=departure?.value;dates.textContent=a&&d?`${a.split("-").reverse().join(".")} – ${d.split("-").reverse().join(".")}`:"—";}if(nights){const a=arrival?.value,d=departure?.value,ms=a&&d?Date.parse(d+"T00:00:00Z")-Date.parse(a+"T00:00:00Z"):0,n=ms>0?Math.round(ms/86400000):0;nights.textContent=n?`${n} ${n===1?"noćenje":"noćenja"}`:"—";}
   }
   select.addEventListener("change",updateBookingSummary);
   arrival?.addEventListener("change",updateBookingSummary);departure?.addEventListener("change",updateBookingSummary);
