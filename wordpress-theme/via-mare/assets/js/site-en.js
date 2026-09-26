@@ -31,6 +31,15 @@ const SB_URL="https://arcjsoupsfdoosspfgvb.supabase.co";
 const SB_KEY="sb_publishable_EfnLnRBdRqQ6JQHQdnxWIg_WUifgMhr";
 const db=window.supabase?.createClient(SB_URL,SB_KEY);
 function photoUrl(p){if(!p)return"";if(/^https?:/.test(p))return p;return SB_URL+"/storage/v1/object/public/accommodation-photos/"+p}
+const VM_EXPECTED_PHOTOS={"Standard Triple Studio":11,"Triple Studio with Balcony":12,"Triple Studio with Sea View":12,"Standard One Bedroom Apartment":10,"One-Bedroom Apartment with Balcony":12,"One-Bedroom Apartment with Sea View":13,"Apartment with Sea View - (Attic)":12};
+function cleanEnglishPhotos(u){
+ const seen=new Set();
+ return (u.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0)).filter(p=>{
+  const key=(p.storage_path||"").split("/").pop().toLowerCase();
+  if(seen.has(key))return false;
+  seen.add(key);return true;
+ }).slice(0,VM_EXPECTED_PHOTOS[u.name]||99);
+}
 async function loadEnglish(){
  if(!db)return;
  const {data,error}=await db.from("unit_types").select("id,name,description,max_guests,active").eq("active",true).order("name");
@@ -38,7 +47,7 @@ async function loadEnglish(){
  const {data:photoRows,error:photoError}=await db.from("photos").select("*").order("sort_order");
  if(photoError){console.error("Via Mare photos:",photoError);return;}
  const byType={};(photoRows||[]).forEach(p=>{if(!byType[p.unit_type_id])byType[p.unit_type_id]=[];byType[p.unit_type_id].push(p)});
- data.forEach(u=>u.photos=byType[u.id]||[]);
+ data.forEach(u=>{u.photos=byType[u.id]||[];u.photos=cleanEnglishPhotos(u)});
  const units=data;
  const hero=document.getElementById("hero-media");
  if(hero){const hp=units.flatMap(u=>(u.photos||[]).map(p=>({u,p}))).sort((a,b)=>(a.p.sort_order||0)-(b.p.sort_order||0))[0];if(hp)hero.style.backgroundImage='url("'+photoUrl(hp.p.storage_path)+'")';}
