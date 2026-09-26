@@ -44,6 +44,8 @@ function vm_render_bundled_page() {
     $file = get_template_directory() . '/site/' . $map[$slug];
     if (!is_readable($file)) return;
     $html = file_get_contents($file);
+    $canonical = $slug === '' ? home_url('/') : home_url('/'.$slug.'/');
+    if (stripos($html, 'rel="canonical"') === false) $html = preg_replace('~</head>~i', '<link rel="canonical" href="'.esc_url($canonical).'"></head>', $html, 1);
     $theme = trailingslashit(get_template_directory_uri());
     $css_ver = (string) @filemtime(get_template_directory() . '/assets/css/site.css');
     $js_ver = (string) @filemtime(get_template_directory() . '/assets/js/site.js');
