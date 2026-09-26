@@ -11,7 +11,7 @@ const SB="https://arcjsoupsfdoosspfgvb.supabase.co",KEY="sb_publishable_EfnLnRBd
   const arrival=document.querySelector('#checkout-form [name="arrival"]'),departure=document.querySelector('#checkout-form [name="departure"]');
   function updateBookingSummary(){
     const u=units.find(x=>x.name===select.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo"),dates=document.getElementById("summary-dates");
-    if(title)title.textContent=u?(srName[u.name]||u.name):"Izaberite tip smještaja";
+    if(title)title.textContent=u?(srName[u.name]||u.name):"";
     if(photo)photo.innerHTML=u&&u.photos&&u.photos[0]?`<img src="${purl(u.photos[0].storage_path)}" alt="${srName[u.name]||u.name}">`:"";
     if(dates){const a=arrival?.value,d=departure?.value;dates.textContent=a&&d?`${a.split("-").reverse().join(".")} – ${d.split("-").reverse().join(".")}`:"—";}
   }
