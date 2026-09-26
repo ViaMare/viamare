@@ -64,6 +64,7 @@ function vm_render_bundled_page() {
       'one-bedroom-apartment-with-sea-view'=>'one-bedroom-apartment-with-sea-view','apartment-with-sea-view-attic'=>'apartment-with-sea-view-attic'];
     $en_slug = $en_map[$slug] ?? '';
     $en_url = $en_slug === '' ? home_url('/en/') : home_url('/en/'.$en_slug.'/');
+    if ($slug === 'placanje' && !empty($_SERVER['QUERY_STRING'])) $en_url .= '?'.$_SERVER['QUERY_STRING'];
     $lang_switch = '<div class="vm-language-switch"><a class="active" href="'.esc_url(home_url($slug===''?'/':'/'.$slug.'/')).'">MNE/SRB</a><span aria-hidden="true"> / </span><a href="'.esc_url($en_url).'">EN</a></div>';
     $utility = '<div class="utility"><div class="container"><span>Buljarica · Montenegro · <span class="category-stars" aria-label="4 zvjezdice">★★★★</span></span>'.$lang_switch.'</div></div>';
 
