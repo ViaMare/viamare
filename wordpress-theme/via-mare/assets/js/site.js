@@ -2,12 +2,14 @@ const SB="https://arcjsoupsfdoosspfgvb.supabase.co",KEY="sb_publishable_EfnLnRBd
   const select=document.getElementById("payment-unit");
   if(!select)return;
   const requested=new URLSearchParams(location.search).get("unit");
+  const isRequested=u=>!!requested&&(u.name===requested||(slug[u.name]||"").replace(/\.html$/,"")===requested);
   const ordered=[...units].sort((a,b)=>{
-    if(a.name===requested)return -1;
-    if(b.name===requested)return 1;
+    const am=isRequested(a),bm=isRequested(b);
+    if(am&&!bm)return -1;
+    if(bm&&!am)return 1;
     return (srName[a.name]||a.name).localeCompare(srName[b.name]||b.name,"sr");
   });
-  select.innerHTML=ordered.map(u=>`<option value="${u.name}"${u.name===requested?" selected":""}>${srName[u.name]||u.name}</option>`).join("");
+  select.innerHTML=ordered.map((u,i)=>`<option value="${u.name}"${i===0?" selected":""}>${srName[u.name]||u.name}</option>`).join("");
   const arrival=document.querySelector('#checkout-form [name="arrival"]'),departure=document.querySelector('#checkout-form [name="departure"]');
   function updateBookingSummary(){
     const u=units.find(x=>x.name===select.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo"),dates=document.getElementById("summary-dates");
