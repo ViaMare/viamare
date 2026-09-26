@@ -76,7 +76,7 @@ async function loadEnglish(){
  const uh=document.querySelector("[data-en-unit-hero]");
  if(uh){const match=units.find(u=>slugs[u.name]===uh.dataset.enUnitHero);const p=match&&(match.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))[0];if(p){uh.style.position="relative";uh.style.backgroundImage='linear-gradient(rgba(15,44,63,.60),rgba(15,44,63,.60)),url("'+photoUrl(p.storage_path)+'")';uh.style.backgroundSize="cover";uh.style.backgroundPosition="center";}}
  const ug=document.querySelector(".unit-gallery[data-en-unit]");
- if(ug){const wanted=ug.dataset.enUnit,match=units.find(u=>slugs[u.name]===wanted);if(match){const photos=(match.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));ug.innerHTML=photos.map(p=>'<button type="button"><img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[match.name]||match.name)+'"></button>').join("")}}
+ if(ug){const wanted=ug.dataset.enUnit,match=units.find(u=>slugs[u.name]===wanted);if(match){const photos=(match.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0)),images=photos.map(p=>({src:photoUrl(p.storage_path),alt:VM_EN_NAMES[match.name]||match.name}));ug.innerHTML=photos.map((p,i)=>'<button type="button" data-i="'+i+'"><img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[match.name]||match.name)+'"></button>').join("");ug.querySelectorAll("button").forEach(b=>b.onclick=()=>vmEnLightbox(images,+b.dataset.i))}}
  const gallery=document.getElementById("full-gallery"),featured=document.getElementById("gallery-featured"),toggle=document.getElementById("gallery-show-all"),filters=document.getElementById("gallery-filters");
  if(gallery){
   const all=englishGalleryAll(units);let selected="";
@@ -91,7 +91,7 @@ async function loadEnglish(){
   paint();if(toggle)toggle.onclick=()=>{gallery.hidden=!gallery.hidden;featured.hidden=!gallery.hidden;toggle.textContent=gallery.hidden?"Show all photos ("+list().length+")":"Back to collage"};
  }
  const sel=document.getElementById("payment-unit");
- if(sel){const requested=new URLSearchParams(location.search).get("unit");units.forEach(u=>{const o=document.createElement("option");o.value=u.id;o.dataset.name=u.name;o.textContent=VM_EN_NAMES[u.name]||u.name;if(requested&&(requested===slugs[u.name]||requested===u.name))o.selected=true;sel.appendChild(o)});const paintSelection=()=>{const o=sel.options[sel.selectedIndex],u=units.find(x=>x.id===sel.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo");if(title)title.textContent=u?(VM_EN_NAMES[u.name]||u.name):"Select accommodation type";if(photo)photo.innerHTML=u&&u.photos&&u.photos[0]?'<img src="'+photoUrl(u.photos[0].storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':""};sel.addEventListener("change",paintSelection);paintSelection();}
+ if(sel){const requested=new URLSearchParams(location.search).get("unit");units.forEach(u=>{const o=document.createElement("option");o.value=u.name;o.dataset.name=u.name;o.textContent=VM_EN_NAMES[u.name]||u.name;if(requested&&(requested===slugs[u.name]||requested===u.name))o.selected=true;sel.appendChild(o)});const paintSelection=()=>{const o=sel.options[sel.selectedIndex],u=units.find(x=>x.name===sel.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo");if(title)title.textContent=u?(VM_EN_NAMES[u.name]||u.name):"Select accommodation type";if(photo)photo.innerHTML=u&&u.photos&&u.photos[0]?'<img src="'+photoUrl(u.photos[0].storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':""};sel.addEventListener("change",paintSelection);paintSelection();}
 }
 document.querySelector(".menu-toggle")?.addEventListener("click",()=>document.body.classList.toggle("mobile-open"));
 const checkout=document.getElementById("checkout-form");
@@ -112,7 +112,7 @@ function vmEnLightbox(images,start=0){
  document.addEventListener("keydown",function key(e){if(!box.isConnected){document.removeEventListener("keydown",key);return}if(e.key==="Escape")box.remove();if(e.key==="ArrowLeft")box.querySelector(".lb-prev").click();if(e.key==="ArrowRight")box.querySelector(".lb-next").click()});
  document.body.appendChild(box);paint();
 }
-document.getElementById("booking-form")?.addEventListener("submit",e=>{e.preventDefault();const f=new FormData(e.currentTarget),a=f.get("arrival")||"",d=f.get("departure")||"";if(!a||!d||d<=a){const r=document.getElementById("booking-result");if(r)r.textContent="Please select valid arrival and departure dates.";return;}const q=new URLSearchParams({arrival:a,departure:d,adults:f.get("adults")||"2",children:f.get("children")||"0",promo:f.get("promo")||""});location.href=VM_EN_BASE+"booking/?"+q.toString();});
+document.getElementById("booking-form")?.addEventListener("submit",e=>{e.preventDefault();const f=new FormData(e.currentTarget),a=f.get("arrival")||"",d=f.get("departure")||"",r=document.getElementById("booking-result");if(r)r.innerHTML=(!a||!d||d<=a)?"Departure must be after arrival.":'<p><b>'+a+' — '+d+'</b><br>Availability and price will be displayed after the channel manager is connected.</p>';});
 
 (function syncLanguageCounterpart(){
  const a=document.querySelector(".vm-language-switch a:not(.active)");if(!a)return;
