@@ -26,7 +26,7 @@ jobs:
           test -f wordpress-theme/via-mare/assets/css/site.css
           test -f wordpress-theme/via-mare/assets/js/site.js
           test -f wordpress-theme/via-mare/assets/js/site-en.js
-          test -f wordpress-theme/via-mare/assets/images/via-mare-logo.svg
+          test -f "wordpress-theme/via-mare/assets/images/via_mare_upscaled_4x (1).jpg"
           test -f wordpress-theme/via-mare/site/index.html
       - name: Build installable ZIP
         run: |
