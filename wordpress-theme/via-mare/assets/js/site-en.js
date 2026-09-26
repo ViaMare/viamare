@@ -30,7 +30,7 @@ const VM_EN_DESC={
 const SB_URL="https://arcjsoupsfdoosspfgvb.supabase.co";
 const SB_KEY="sb_publishable_EfnLnRBdRqQ6JQHQdnxWIg_WUifgMhr";
 const db=window.supabase?.createClient(SB_URL,SB_KEY);
-function photoUrl(p){if(!p)return"";if(/^https?:/.test(p))return p;return SB_URL+"/storage/v1/object/public/accommodation-photos/"+p}
+function photoUrl(p){if(!p)return"";if(/^https?:/.test(p))return p;return SB_URL+"/storage/v1/object/public/accommodation-photos/"+p.split("/").map(encodeURIComponent).join("/")}
 const VM_EXPECTED_PHOTOS={"Standard Triple Studio":11,"Triple Studio with Balcony":12,"Triple Studio with Sea View":12,"Standard One Bedroom Apartment":10,"One-Bedroom Apartment with Balcony":12,"One-Bedroom Apartment with Sea View":13,"Apartment with Sea View - (Attic)":12};
 function cleanEnglishPhotos(u){
  const seen=new Set();
@@ -40,11 +40,25 @@ function cleanEnglishPhotos(u){
   seen.add(key);return true;
  }).slice(0,VM_EXPECTED_PHOTOS[u.name]||99);
 }
+const VM_PROPERTY_PHOTOS=[
+{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/0fa8bb52.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:0,alt_text:"Apartments Via Mare"},
+{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/0fa8bb52.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:1,alt_text:"Apartments Via Mare"},
+{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/560a0bab.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:2,alt_text:"Apartments Via Mare"},
+{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/8fed9af4.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:3,alt_text:"Apartments Via Mare"},
+{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/18f4f010.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:4,alt_text:"Apartments Via Mare"},
+{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/c18970fe.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:5,alt_text:"Apartments Via Mare"},
+{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/fdd52139.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:6,alt_text:"Apartments Via Mare"},
+{storage_path:"https://images.trvl-media.com/lodging/132000000/131340000/131330300/131330285/d1a3c180.jpg?impolicy=resizecrop&rw=1600&ra=fit",sort_order:7,alt_text:"Apartments Via Mare"}
+];
 function englishGalleryAll(units){
- const seen=new Set(),out=[];
+ const seen=new Set(),out=[],propertyUnit={name:"Property and grounds"};
+ VM_PROPERTY_PHOTOS.forEach(p=>out.push({u:propertyUnit,p}));
  units.forEach(u=>(u.photos||[]).forEach(p=>{
-  const k=(p.storage_path||"").split("/").pop().toLowerCase();
-  if(!seen.has(k)){seen.add(k);out.push({u,p})}
+  const file=((p.storage_path||"").split("/").pop()||p.storage_path||"").toLowerCase();
+  const base=file.replace(/\.[^.]+$/,"");
+  const m=base.match(/[_-]([0-9a-f]{8,})$/),key=m?m[1]:base;
+  if(seen.has(key))return;
+  seen.add(key);out.push({u,p});
  }));
  return out;
 }
@@ -64,7 +78,18 @@ async function loadEnglish(){
  const ug=document.querySelector(".unit-gallery[data-en-unit]");
  if(ug){const wanted=ug.dataset.enUnit,match=units.find(u=>slugs[u.name]===wanted);if(match){const photos=(match.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));ug.innerHTML=photos.map(p=>'<button type="button"><img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[match.name]||match.name)+'"></button>').join("")}}
  const gallery=document.getElementById("full-gallery"),featured=document.getElementById("gallery-featured"),toggle=document.getElementById("gallery-show-all"),filters=document.getElementById("gallery-filters");
- if(gallery){let all=englishGalleryAll(units);const paint=a=>{gallery.innerHTML=a.map(x=>'<button type="button"><img src="'+photoUrl(x.p.storage_path)+'" alt="'+(VM_EN_NAMES[x.u.name]||x.u.name)+'"></button>').join("");if(featured)featured.innerHTML=a.slice(0,5).map((x,i)=>'<button class="gallery-feature gallery-feature-'+(i+1)+'" type="button"><img src="'+photoUrl(x.p.storage_path)+'" alt="'+(VM_EN_NAMES[x.u.name]||x.u.name)+'">'+(i===4&&a.length>5?'<span>+'+(a.length-5)+' photos</span>':'')+'</button>').join("")};paint(all);if(toggle)toggle.textContent="Show all "+all.length+" photos";if(filters){filters.innerHTML='<button class="active" data-u="">All</button>'+units.map(u=>'<button data-u="'+u.name+'">'+(VM_EN_NAMES[u.name]||u.name)+'</button>').join("");filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{filters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));paint(b.dataset.u?all.filter(x=>x.u.name===b.dataset.u):all)})}if(toggle)toggle.onclick=()=>{gallery.hidden=!gallery.hidden;featured.hidden=!gallery.hidden;toggle.textContent=gallery.hidden?"Show all "+all.length+" photos":"Back to collage"}}
+ if(gallery){
+  const all=englishGalleryAll(units);let selected="";
+  const list=()=>selected?all.filter(x=>x.u.name===selected):all;
+  const paint=()=>{const a=list();
+   if(featured){featured.innerHTML=a.slice(0,5).map((x,i)=>'<button class="gallery-feature gallery-feature-'+(i+1)+'" data-i="'+i+'"><img src="'+photoUrl(x.p.storage_path)+'" alt="Apartments Via Mare">'+(i===4&&a.length>5?'<span>+'+(a.length-5)+' photos</span>':'')+'</button>').join("");featured.querySelectorAll("button").forEach(b=>b.onclick=e=>{e.stopPropagation();vmEnLightbox(a.map(x=>({src:photoUrl(x.p.storage_path),alt:VM_EN_NAMES[x.u.name]||x.u.name})),+b.dataset.i)})}
+   gallery.innerHTML=a.map((x,i)=>'<button class="gallery-thumb" data-i="'+i+'"><img src="'+photoUrl(x.p.storage_path)+'" alt="Apartments Via Mare"></button>').join("");
+   gallery.querySelectorAll("button").forEach(b=>b.onclick=e=>{e.stopPropagation();vmEnLightbox(a.map(x=>({src:photoUrl(x.p.storage_path),alt:VM_EN_NAMES[x.u.name]||x.u.name})),+b.dataset.i)});
+   gallery.hidden=true;if(toggle)toggle.textContent="Show all photos ("+a.length+")";
+  };
+  if(filters){filters.innerHTML='<button class="active" data-u="">All</button><button data-u="Property and grounds">Property and grounds</button>'+units.map(u=>'<button data-u="'+u.name+'">'+(VM_EN_NAMES[u.name]||u.name)+'</button>').join("");filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{selected=b.dataset.u;filters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));paint()})}
+  paint();if(toggle)toggle.onclick=()=>{gallery.hidden=!gallery.hidden;featured.hidden=!gallery.hidden;toggle.textContent=gallery.hidden?"Show all photos ("+list().length+")":"Back to collage"};
+ }
  const sel=document.getElementById("payment-unit");
  if(sel){const requested=new URLSearchParams(location.search).get("unit");units.forEach(u=>{const o=document.createElement("option");o.value=u.id;o.dataset.name=u.name;o.textContent=VM_EN_NAMES[u.name]||u.name;if(requested&&(requested===slugs[u.name]||requested===u.name))o.selected=true;sel.appendChild(o)});const paintSelection=()=>{const o=sel.options[sel.selectedIndex],u=units.find(x=>x.id===sel.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo");if(title)title.textContent=u?(VM_EN_NAMES[u.name]||u.name):"Select accommodation type";if(photo)photo.innerHTML=u&&u.photos&&u.photos[0]?'<img src="'+photoUrl(u.photos[0].storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':""};sel.addEventListener("change",paintSelection);paintSelection();}
 }
@@ -72,7 +97,7 @@ document.querySelector(".menu-toggle")?.addEventListener("click",()=>document.bo
 const checkout=document.getElementById("checkout-form");
 if(checkout){const q=new URLSearchParams(location.search),ai=checkout.querySelector('[name="arrival"]'),di=checkout.querySelector('[name="departure"]');if(ai&&q.get("arrival"))ai.value=q.get("arrival");if(di&&q.get("departure"))di.value=q.get("departure");}
 checkout?.addEventListener("submit",e=>{e.preventDefault();const f=new FormData(e.currentTarget),a=f.get("arrival"),d=f.get("departure"),s=document.getElementById("payment-status");if(!a||!d||!f.get("unit")||!f.get("name")||!f.get("email")){s.textContent="Please complete all required fields.";return}if(d<=a){s.textContent="Departure must be after arrival.";return}s.textContent="Online card payment is not active yet. No reservation has been charged or submitted.";});
-document.getElementById("inquiry-form")?.addEventListener("submit",async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f),s=document.getElementById("form-status");if(!db){s.textContent="The enquiry service is temporarily unavailable.";return}const {error}=await db.from("contact_inquiries").insert({name:(d.get("name")||"").trim(),email:(d.get("email")||"").trim(),phone:(d.get("phone")||"").trim()||null,message:(d.get("message")||"").trim()});s.textContent=error?"Your enquiry could not be sent. Please try again.":"Thank you. Your enquiry has been sent.";if(!error)f.reset();});
+document.getElementById("inquiry-form")?.addEventListener("submit",async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f),s=document.getElementById("form-status");if(!db){s.textContent="The enquiry service is temporarily unavailable.";return}const {error}=await db.from("contact_inquiries").insert({name:(d.get("name")||"").trim(),email:(d.get("email")||"").trim(),phone:(d.get("phone")||"").trim()||null,message:(d.get("message")||"").trim(),desired_check_in:d.get("checkin")||null,desired_check_out:d.get("checkout")||null,guests:d.get("guests")?Number(d.get("guests")):null});s.textContent=error?"Your enquiry could not be sent. Please try again.":"Thank you. Your enquiry has been sent.";if(!error)f.reset();});
 loadEnglish();
 
 function vmEnLightbox(images,start=0){
@@ -87,8 +112,6 @@ function vmEnLightbox(images,start=0){
  document.addEventListener("keydown",function key(e){if(!box.isConnected){document.removeEventListener("keydown",key);return}if(e.key==="Escape")box.remove();if(e.key==="ArrowLeft")box.querySelector(".lb-prev").click();if(e.key==="ArrowRight")box.querySelector(".lb-next").click()});
  document.body.appendChild(box);paint();
 }
-document.addEventListener("click",e=>{const b=e.target.closest(".unit-gallery button,.gallery-featured button,.full-gallery button");if(!b)return;const scope=b.closest(".unit-gallery,.gallery-featured,.full-gallery"),buttons=[...scope.querySelectorAll("button")],images=buttons.map(x=>x.querySelector("img")).filter(Boolean).map(x=>({src:x.src,alt:x.alt}));const bi=buttons.indexOf(b);vmEnLightbox(images,Math.max(0,bi));});
-
 document.getElementById("booking-form")?.addEventListener("submit",e=>{e.preventDefault();const f=new FormData(e.currentTarget),a=f.get("arrival")||"",d=f.get("departure")||"";if(!a||!d||d<=a){const r=document.getElementById("booking-result");if(r)r.textContent="Please select valid arrival and departure dates.";return;}const q=new URLSearchParams({arrival:a,departure:d,adults:f.get("adults")||"2",children:f.get("children")||"0",promo:f.get("promo")||""});location.href=VM_EN_BASE+"booking/?"+q.toString();});
 
 (function syncLanguageCounterpart(){
