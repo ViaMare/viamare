@@ -1,4 +1,5 @@
-/* Via Mare English dynamic layer */\nlet englishUnits=[];
+/* Via Mare English dynamic layer */
+let englishUnits=[];
 const VM_EN_BASE=window.VM_EN_BASE||"/en/";
 const VM_EN_NAMES={
 "Standard Triple Studio":"Standard Triple Studio with Balcony",
