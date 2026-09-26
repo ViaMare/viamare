@@ -8,11 +8,11 @@ function vm_en_nav($active='') {
  return $out;
 }
 function vm_en_header($active='') {
- $logo='https://raw.githubusercontent.com/ViaMare/viamare/main/via_mare_upscaled_4x%20%281%29.jpg';
+ $logo=trailingslashit(get_template_directory_uri()).'assets/images/via-mare-logo.svg';
  return '<div class="utility"><div class="container"><span>Buljarica · Montenegro · <span class="category-stars" aria-label="4 stars">★★★★</span></span><div class="vm-language-switch"><a href="'.esc_url(home_url('/')).'">MNE/SRB</a><span aria-hidden="true"> / </span><a class="active" href="'.esc_url(home_url('/en/')).'">EN</a></div></div></div><header><div class="container header-inner"><a class="logo" href="'.esc_url(home_url('/en/')).'" aria-label="Via Mare — Home"><img src="'.esc_url($logo).'" alt="Apartments Via Mare"></a><button class="menu-toggle" aria-label="Open menu">☰</button><nav class="main-nav">'.vm_en_nav($active).'</nav><a class="header-book" href="'.esc_url(home_url('/en/booking/')).'">Book now</a></div></header>';
 }
 function vm_en_footer() {
- $logo='https://raw.githubusercontent.com/ViaMare/viamare/main/via_mare_upscaled_4x%20%281%29.jpg';
+ $logo=trailingslashit(get_template_directory_uri()).'assets/images/via-mare-logo.svg';
  return '<footer><div class="container footer-grid"><div><img src="'.esc_url($logo).'" alt="Apartments Via Mare"><p>Four-star apartments in peaceful Buljarica, just a few minutes from the sea.</p></div><div><h4>Navigation</h4><a href="'.esc_url(home_url('/en/about/')).'">About us</a><a href="'.esc_url(home_url('/en/accommodation/')).'">Accommodation</a><a href="'.esc_url(home_url('/en/gallery/')).'">Gallery</a><a href="'.esc_url(home_url('/en/beaches/')).'">Beaches</a><a href="'.esc_url(home_url('/en/buljarica/')).'">Buljarica</a></div><div><h4>Location</h4><p>Buljarica bb<br>85300 Petrovac na Moru<br>Montenegro</p></div></div><div class="container copyright">© 2026 Apartments Via Mare · <span class="category-stars" aria-label="4 stars">★★★★</span></div></footer>';
 }
 function vm_en_document($title,$active,$body,$bodyClass='') {
