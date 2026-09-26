@@ -85,7 +85,10 @@ function vm_render_bundled_page() {
     // Route internal static links through WordPress clean URLs.
     foreach ($map as $s => $source) {
         $url = $s === '' ? home_url('/') : home_url('/'.$s.'/');
-        $html = str_replace('href="'.$source.'"', 'href="'.esc_url($url).'"', $html);
+        // Preserve query strings as well (e.g. placanje.html?unit=...), not only bare static links.
+        $html = preg_replace_callback('~href="'.preg_quote($source, '~').'([^"]*)"~', function($m) use ($url) {
+            return 'href="'.esc_url($url).$m[1].'"';
+        }, $html);
     }
     echo $html;
     exit;
