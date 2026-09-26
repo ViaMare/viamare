@@ -40,13 +40,13 @@ function cleanEnglishPhotos(u){
   seen.add(key);return true;
  }).slice(0,VM_EXPECTED_PHOTOS[u.name]||99);
 }
-function englishGallery79(units){
+function englishGalleryAll(units){
  const seen=new Set(),out=[];
  units.forEach(u=>(u.photos||[]).forEach(p=>{
   const k=(p.storage_path||"").split("/").pop().toLowerCase();
   if(!seen.has(k)){seen.add(k);out.push({u,p})}
  }));
- return out.slice(0,79);
+ return out;
 }
 async function loadEnglish(){
  if(!db)return;
@@ -68,7 +68,7 @@ async function loadEnglish(){
  const ug=document.querySelector(".unit-gallery[data-en-unit]");
  if(ug){const wanted=ug.dataset.enUnit,match=units.find(u=>slugs[u.name]===wanted);if(match){const photos=(match.photos||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));ug.innerHTML=photos.map(p=>'<button type="button"><img src="'+photoUrl(p.storage_path)+'" alt="'+(VM_EN_NAMES[match.name]||match.name)+'"></button>').join("")}}
  const gallery=document.getElementById("full-gallery"),featured=document.getElementById("gallery-featured"),toggle=document.getElementById("gallery-show-all"),filters=document.getElementById("gallery-filters");
- if(gallery){let all=englishGallery79(units);const paint=a=>{gallery.innerHTML=a.map(x=>'<button type="button"><img src="'+photoUrl(x.p.storage_path)+'" alt="'+(VM_EN_NAMES[x.u.name]||x.u.name)+'"></button>').join("");if(featured)featured.innerHTML=a.slice(0,5).map((x,i)=>'<button class="gallery-feature gallery-feature-'+(i+1)+'" type="button"><img src="'+photoUrl(x.p.storage_path)+'" alt="'+(VM_EN_NAMES[x.u.name]||x.u.name)+'">'+(i===4&&a.length>5?'<span>+'+(a.length-5)+' photos</span>':'')+'</button>').join("")};paint(all);if(toggle)toggle.textContent="Show all "+all.length+" photos";if(filters){filters.innerHTML='<button class="active" data-u="">All</button>'+units.map(u=>'<button data-u="'+u.name+'">'+(VM_EN_NAMES[u.name]||u.name)+'</button>').join("");filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{filters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));paint(b.dataset.u?all.filter(x=>x.u.name===b.dataset.u):all)})}if(toggle)toggle.onclick=()=>{gallery.hidden=!gallery.hidden;featured.hidden=!gallery.hidden;toggle.textContent=gallery.hidden?"Show all "+all.length+" photos":"Back to collage"}}
+ if(gallery){let all=englishGalleryAll(units);const paint=a=>{gallery.innerHTML=a.map(x=>'<button type="button"><img src="'+photoUrl(x.p.storage_path)+'" alt="'+(VM_EN_NAMES[x.u.name]||x.u.name)+'"></button>').join("");if(featured)featured.innerHTML=a.slice(0,5).map((x,i)=>'<button class="gallery-feature gallery-feature-'+(i+1)+'" type="button"><img src="'+photoUrl(x.p.storage_path)+'" alt="'+(VM_EN_NAMES[x.u.name]||x.u.name)+'">'+(i===4&&a.length>5?'<span>+'+(a.length-5)+' photos</span>':'')+'</button>').join("")};paint(all);if(toggle)toggle.textContent="Show all "+all.length+" photos";if(filters){filters.innerHTML='<button class="active" data-u="">All</button>'+units.map(u=>'<button data-u="'+u.name+'">'+(VM_EN_NAMES[u.name]||u.name)+'</button>').join("");filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{filters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));paint(b.dataset.u?all.filter(x=>x.u.name===b.dataset.u):all)})}if(toggle)toggle.onclick=()=>{gallery.hidden=!gallery.hidden;featured.hidden=!gallery.hidden;toggle.textContent=gallery.hidden?"Show all "+all.length+" photos":"Back to collage"}}
  const sel=document.getElementById("payment-unit");
  if(sel){const requested=new URLSearchParams(location.search).get("unit");units.forEach(u=>{const o=document.createElement("option");o.value=u.id;o.dataset.name=u.name;o.textContent=VM_EN_NAMES[u.name]||u.name;if(requested&&(requested===slugs[u.name]||requested===u.name))o.selected=true;sel.appendChild(o)});const paintSelection=()=>{const o=sel.options[sel.selectedIndex],u=units.find(x=>x.id===sel.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo");if(title)title.textContent=u?(VM_EN_NAMES[u.name]||u.name):"Select accommodation type";if(photo)photo.innerHTML=u&&u.photos&&u.photos[0]?'<img src="'+photoUrl(u.photos[0].storage_path)+'" alt="'+(VM_EN_NAMES[u.name]||u.name)+'">':""};sel.addEventListener("change",paintSelection);paintSelection();}
 }
