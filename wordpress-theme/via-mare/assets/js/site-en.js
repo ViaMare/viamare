@@ -65,7 +65,7 @@ function englishGalleryAll(units){
 async function loadEnglish(){
  if(!db)return;
  const {data,error}=await db.from("unit_types").select("id,name,description,max_guests,photos(storage_path,sort_order)").eq("active",true).order("name");
- if(error||!data){console.error("Via Mare unit_types:",error);return;}
+ if(error||!data){console.error("Via Mare unit_types:",error);const g=document.getElementById("unit-grid"),pg=document.getElementById("full-gallery"),sel=document.getElementById("payment-unit");if(g)g.innerHTML='<p class="loading">Accommodation cannot be loaded at the moment. Please try again.</p>';if(pg)pg.innerHTML='<p class="loading">The gallery cannot be loaded at the moment. Please try again.</p>';if(sel)sel.disabled=true;return;}
  const units=(data||[]).map(u=>({...u,photos:cleanEnglishPhotos(u)}));
  const hero=document.getElementById("hero-media");
  if(hero){const hp=units.flatMap(u=>(u.photos||[]).map(p=>({u,p})))[0];if(hp)hero.innerHTML='<img src="'+photoUrl(hp.p.storage_path)+'" alt="Apartments Via Mare">';}
