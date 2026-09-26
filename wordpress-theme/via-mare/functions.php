@@ -46,6 +46,10 @@ function vm_render_bundled_page() {
     $html = file_get_contents($file);
     $canonical = $slug === '' ? home_url('/') : home_url('/'.$slug.'/');
     if (stripos($html, 'rel="canonical"') === false) $html = preg_replace('~</head>~i', '<link rel="canonical" href="'.esc_url($canonical).'"></head>', $html, 1);
+    if (stripos($html, '<meta name="description"') === false) {
+        $desc = 'Apartments Via Mare u Buljarici, Crna Gora — apartmani sa četiri zvjezdice u blizini plaže, sa besplatnim parkingom i Wi-Fi mrežom.';
+        $html = preg_replace('~</head>~i', '<meta name="description" content="'.esc_attr($desc).'"></head>', $html, 1);
+    }
     $theme = trailingslashit(get_template_directory_uri());
     $css_ver = (string) @filemtime(get_template_directory() . '/assets/css/site.css');
     $js_ver = (string) @filemtime(get_template_directory() . '/assets/js/site.js');
