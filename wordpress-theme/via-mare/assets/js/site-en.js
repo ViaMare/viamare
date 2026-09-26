@@ -105,7 +105,7 @@ function vmEnLightbox(images,start=0){
  const box=document.createElement("div");box.className="lightbox";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-label","Photo gallery");box.innerHTML='<button type="button" class="lb-prev" aria-label="Previous photo">‹</button><figure><img alt=""><figcaption></figcaption></figure><button type="button" class="lb-next" aria-label="Next photo">›</button><button type="button" class="lb-close" aria-label="Close gallery">×</button>';
  const img=box.querySelector("img"),cap=box.querySelector("figcaption");
  const previousFocus=document.activeElement;const close=()=>{box.remove();document.body.style.overflow="";if(previousFocus&&previousFocus.focus)previousFocus.focus()};
- const paint=()=>{const x=images[i];img.src=x.src;cap.innerHTML='<span>'+(x.alt||"Apartments Via Mare")+' · '+(i+1)+' / '+images.length+'</span>'+(x.unit?'<a class="gold-btn lb-availability" href="'+VM_EN_BASE+'booking/?unit='+encodeURIComponent(x.unit)+'">Check availability</a>':'')};
+ const paint=()=>{const x=images[i],label=x.alt||"Apartments Via Mare";img.src=x.src;img.alt=label+" — photo "+(i+1)+" of "+images.length;cap.innerHTML='<span>'+label+' · '+(i+1)+' / '+images.length+'</span>'+(x.unit?'<a class="gold-btn lb-availability" href="'+VM_EN_BASE+'booking/?unit='+encodeURIComponent(x.unit)+'">Check availability</a>':'')};
  box.querySelector(".lb-prev").onclick=()=>{i=(i-1+images.length)%images.length;paint()};
  box.querySelector(".lb-next").onclick=()=>{i=(i+1)%images.length;paint()};
  box.querySelector(".lb-close").onclick=close;box.onclick=e=>{if(e.target===box)close()};
