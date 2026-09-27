@@ -1,5 +1,7 @@
 (function(){
-"use strict";\nwindow.VMSearchAvailability=(db,a,d,g)=>db.rpc("search_availability",{p_check_in:a,p_check_out:d,p_guests:Number(g)});\nwindow.VMValidateBookingHold=(db,h,a,d,ad,ch,unit)=>{if(!h?.token||h.unit_type!==unit||h.arrival!==a||h.departure!==d||Number(h.adults)!==Number(ad)||Number(h.children)!==Number(ch))return Promise.resolve({data:null,error:{message:"hold_mismatch"}});return db.rpc("validate_booking_hold",{p_token:h.token,p_check_in:a,p_check_out:d,p_adults:Number(ad),p_children:Number(ch)});};
+"use strict";
+window.VMSearchAvailability=(db,a,d,g)=>db.rpc("search_availability",{p_check_in:a,p_check_out:d,p_guests:Number(g)});
+window.VMValidateBookingHold=(db,h,a,d,ad,ch,unit)=>{if(!h?.token||h.unit_type!==unit||h.arrival!==a||h.departure!==d||Number(h.adults)!==Number(ad)||Number(h.children)!==Number(ch))return Promise.resolve({data:null,error:{message:"hold_mismatch"}});return db.rpc("validate_booking_hold",{p_token:h.token,p_check_in:a,p_check_out:d,p_adults:Number(ad),p_children:Number(ch)});};
 window.VMBookingFlow=function(c){
  const checkout=document.getElementById("checkout-form"),select=document.getElementById("payment-unit");if(!checkout||!select)return;
  const grid=checkout.closest(".checkout-grid"),aside=grid?.querySelector(".order-card"),q=new URLSearchParams(location.search),requested=q.get("unit")||"",t=c.text;
