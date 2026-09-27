@@ -53,10 +53,11 @@ function vm_render_bundled_page() {
     $theme = trailingslashit(get_template_directory_uri());
     $css_ver = (string) @filemtime(get_template_directory() . '/assets/css/site.css');
     $js_ver = (string) @filemtime(get_template_directory() . '/assets/js/site.js');
+    $booking_ver = (string) @filemtime(get_template_directory() . '/assets/js/booking-engine.js');
 
     // All presentation assets are served from the installed theme, never fetched from GitHub.
     $html = preg_replace('~<link rel="stylesheet" href="styles\.css(?:\?[^"]*)?">~', '<link rel="stylesheet" href="'.$theme.'assets/css/site.css?v='.$css_ver.'">', $html);
-    $html = preg_replace('~<script src="app\.js(?:\?[^"]*)?"></script>~', '<script src="'.$theme.'assets/js/site.js?v='.$js_ver.'"></script>', $html);
+    $html = preg_replace('~<script src="app\.js(?:\?[^"]*)?"></script>~', '<script src="'.$theme.'assets/js/booking-engine.js?v='.$booking_ver.'"></script><script src="'.$theme.'assets/js/site.js?v='.$js_ver.'"></script>', $html);
 
     // Normalize basic accessibility semantics in bundled MNE/SRB markup before canonical chrome is injected.
     $html = preg_replace('~<button class="menu-toggle"(?![^>]*\btype=)~i', '<button type="button" class="menu-toggle"', $html);
