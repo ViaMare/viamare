@@ -3,14 +3,15 @@ function setupPaymentUnit(){
   const select=document.getElementById("payment-unit");
   if(!select)return;
   const requested=new URLSearchParams(location.search).get("unit");
-  const isRequested=u=>!!requested&&(u.name===requested||(slug[u.name]||"").replace(/\.html$/,"")===requested);
+  const norm=v=>decodeURIComponent(String(v||"")).trim().toLowerCase().replace(/\s+/g," ");
+  const isRequested=u=>!!requested&&(norm(u.name)===norm(requested)||norm((slug[u.name]||"").replace(/\.html$/,""))===norm(requested));
   const ordered=[...units].sort((a,b)=>{
     const am=isRequested(a),bm=isRequested(b);
     if(am&&!bm)return -1;
     if(bm&&!am)return 1;
     return (srName[a.name]||a.name).localeCompare(srName[b.name]||b.name,"sr");
   });
-  select.innerHTML=ordered.map((u,i)=>`<option value="${u.name}"${i===0?" selected":""}>${srName[u.name]||u.name}</option>`).join("");if(requested){select.disabled=true;select.setAttribute("aria-readonly","true");const hidden=document.createElement("input");hidden.type="hidden";hidden.name="unit";hidden.value=ordered[0]?.name||requested;select.removeAttribute("name");select.after(hidden);}
+  select.innerHTML=ordered.map((u,i)=>`<option value="${u.name}"${i===0?" selected":""}>${srName[u.name]||u.name}</option>`).join("");if(requested){const matched=ordered.find(isRequested);if(!matched){select.disabled=true;select.setAttribute("aria-readonly","true");select.innerHTML=`<option selected>${requested}</option>`;const err=document.createElement("p");err.className="booking-init-error";err.textContent="Izabrani apartman trenutno nije moguće učitati. Vratite se na smještaj i pokušajte ponovo.";select.after(err);return;}select.value=matched.name;select.disabled=true;select.setAttribute("aria-readonly","true");const hidden=document.createElement("input");hidden.type="hidden";hidden.name="unit";hidden.value=matched.name;select.removeAttribute("name");select.after(hidden);}
   const arrival=document.querySelector('#checkout-form [name="arrival"]'),departure=document.querySelector('#checkout-form [name="departure"]');
   function updateBookingSummary(){
     const u=units.find(x=>x.name===select.value),title=document.getElementById("payment-unit-title"),photo=document.querySelector(".payment-unit-photo"),dates=document.getElementById("summary-dates"),nights=document.getElementById("summary-nights");
