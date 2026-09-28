@@ -187,3 +187,6 @@ body.vm-page-gallery .page-hero,
 
 /* Step 2 is dynamically moved outside .booking-flow; target the actual rendered block */
 body>.availability-results,main>.availability-results{width:min(1180px,calc(100% - 48px));margin:36px auto;box-sizing:border-box}.availability-results>.availability-result-status,.availability-results>.availability-results-grid{max-width:900px}.availability-results>.change-search{margin:26px 0 0 auto}@media(max-width:600px){body>.availability-results,main>.availability-results{width:calc(100% - 36px);margin:24px auto}}
+
+/* Actual Step 2 lives inside .booking-flow. Give the flow itself the site gutter. */
+.booking-flow{width:min(1180px,calc(100% - 48px));max-width:none;margin-left:auto;margin-right:auto;box-sizing:border-box}.booking-flow>.availability-results{width:100%;max-width:none;margin:36px 0;padding:0}.booking-flow>.availability-results .availability-results-grid{max-width:900px}@media(max-width:600px){.booking-flow{width:calc(100% - 36px)}}
