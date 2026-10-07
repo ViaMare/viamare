@@ -1,0 +1,31 @@
+name: Via Mare Supabase Keepalive
+
+'on':
+  schedule:
+    - cron: '17 7,10,13,16,19 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Touch Via Mare Supabase
+        run: |
+          python3 - <<'PY'
+          import json, random, urllib.parse, urllib.request
+          base = "https://arcjsoupsfdoosspfgvb.supabase.co"
+          key = "sb_publishable_EfnLnRBdRqQ6JQHQdnxWIg_WUifgMhr"
+          headers = {"apikey": key, "Authorization": "Bearer " + key}
+          req = urllib.request.Request(base + "/rest/v1/photos?select=storage_path&limit=80", headers=headers)
+          with urllib.request.urlopen(req, timeout=20) as r:
+              photos = json.load(r)
+          for item in random.sample(photos, min(3, len(photos))):
+              path = "/".join(urllib.parse.quote(p, safe="") for p in item["storage_path"].split("/"))
+              url = base + "/storage/v1/object/public/accommodation-photos/" + path
+              with urllib.request.urlopen(urllib.request.Request(url), timeout=20) as r:
+                  if not r.read(1024):
+                      raise RuntimeError("Empty image response")
+              print("Loaded:", item["storage_path"])
+          print("Via Mare Supabase keepalive OK")
+          PY
