@@ -1,0 +1,54 @@
+name: Via Mare Supabase health check
+
+on:
+  schedule:
+    - cron: '0 8,11,14,17,20 * * *'
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check Supabase database and random photos
+        env:
+          SUPABASE_URL: https://arcjsoupsfdoosspfgvb.supabase.co
+          SUPABASE_KEY: sb_publishable_EfnLnRBdRqQ6JQHQdnxWIg_WUifgMhr
+        run: |
+          python3 - <<'PY'
+          import json, os, random, urllib.parse, urllib.request
+
+          base = os.environ["SUPABASE_URL"]
+          key = os.environ["SUPABASE_KEY"]
+          headers = {"apikey": key, "Authorization": "Bearer " + key}
+
+          req = urllib.request.Request(
+              base + "/rest/v1/photos?select=storage_path&limit=80",
+              headers=headers,
+          )
+          with urllib.request.urlopen(req, timeout=20) as r:
+              photos = json.load(r)
+
+          if not photos:
+              req = urllib.request.Request(
+                  base + "/rest/v1/unit_types?select=id&limit=1",
+                  headers=headers,
+              )
+              with urllib.request.urlopen(req, timeout=20) as r:
+                  r.read()
+              print("Supabase OK; database reachable; no photos found.")
+              raise SystemExit(0)
+
+          chosen = random.sample(photos, min(3, len(photos)))
+          for item in chosen:
+              path = "/".join(urllib.parse.quote(part, safe="") for part in item["storage_path"].split("/"))
+              url = base + "/storage/v1/object/public/accommodation-photos/" + path
+              req = urllib.request.Request(url, headers={"User-Agent": "ViaMare-Supabase-Health-Check/1.0"})
+              with urllib.request.urlopen(req, timeout=20) as r:
+                  chunk = r.read(1024)
+                  if not chunk:
+                      raise RuntimeError("Empty image response: " + item["storage_path"])
+              print("Loaded:", item["storage_path"])
+
+          print(f"Supabase OK; successfully loaded {len(chosen)} random photo(s).")
+          PY
